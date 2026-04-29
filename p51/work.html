@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project 51 — The Atelier · Selected Work</title>
+  <meta name="description" content="An archive of systems we shipped. Dated, documented, stripped of marketing — read these as lab notes, not pitch decks."/>
+  <meta name="theme-color" content="#060606"/>
+  <link rel="canonical" href="https://nona-portfolio-eight.vercel.app/p51/work"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Project 51 — The Atelier · Selected Work"/>
+  <meta property="og:description" content="An archive of systems we shipped. Read as lab notes."/>
+  <meta property="og:url" content="https://nona-portfolio-eight.vercel.app/p51/work"/>
+  <meta property="og:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       ATELIER · the work, in chronicle form
+    ═══════════════════════════════════════════════════════════ */
+
+    body {
+      transition: opacity 800ms ease;
+      line-height: 1.5;
+    }
+    body.entering { opacity: 0; }
+
+    main { padding-top: var(--sp-7); }
+
+    /* ── hero ── */
+    .a-hero {
+      padding: var(--sp-20) clamp(24px, 6vw, 80px) var(--sp-12);
+      border-bottom: 1px solid var(--p51-border);
+      position: relative;
+    }
+    .a-hero::before {
+      content: '';
+      position: absolute;
+      top: var(--sp-4); right: clamp(24px, 6vw, 80px);
+      width: 10px; height: 10px;
+      border-top: 1px solid var(--p51-t-30);
+      border-right: 1px solid var(--p51-t-30);
+    }
+    .a-hero-content { max-width: 1200px; }
+    .a-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-50);
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: var(--sp-3);
+    }
+    .a-eyebrow::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--p51-t-50);
+    }
+    .a-title {
+      font-size: clamp(48px, 8vw, 116px);
+      font-weight: 100;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      max-width: 14ch;
+    }
+    .a-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--p51-t-70);
+    }
+    .a-sub {
+      margin-top: var(--sp-5);
+      font-size: clamp(15px, 1.5vw, 17px);
+      color: var(--p51-t-50);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+    .a-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-6);
+      margin-top: var(--sp-8);
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--p51-border);
+    }
+    .a-meta-item {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .a-meta-item strong {
+      display: block;
+      color: var(--p51-white);
+      font-weight: 300;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    /* ── projects index ── */
+    .index {
+      padding: var(--sp-12) clamp(24px, 6vw, 80px);
+    }
+    .index-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 200px 100px 60px;
+      gap: var(--sp-5);
+      align-items: baseline;
+      padding: var(--sp-5) 0;
+      border-bottom: 1px solid var(--p51-border);
+      cursor: none;
+      position: relative;
+      transition: padding-left var(--dur-mid) var(--ease-expo);
+    }
+    .index-row:first-child { border-top: 1px solid var(--p51-border-hi); }
+    .index-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--p51-t-04);
+      transition: width var(--dur-mid) var(--ease-expo);
+    }
+    .index-row:hover::before { width: 100%; }
+    .index-row:hover { padding-left: var(--sp-3); }
+    .index-row > * { position: relative; }
+
+    .idx-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      transition: color var(--dur-fast);
+    }
+    .index-row:hover .idx-num { color: var(--p51-white); }
+
+    .idx-title-block { display: flex; flex-direction: column; gap: 6px; }
+    .idx-title {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 200;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .idx-title em { font-family: var(--font-serif); font-style: italic; color: var(--p51-t-50); }
+    .idx-desc {
+      font-size: 13px;
+      color: var(--p51-t-50);
+      line-height: 1.65;
+      max-width: 520px;
+    }
+
+    .idx-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .idx-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: var(--p51-t-50);
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--p51-border);
+      border-radius: 100px;
+    }
+
+    .idx-year {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--p51-t-50);
+      letter-spacing: 0.06em;
+      text-align: right;
+    }
+
+    .idx-arrow {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--p51-t-30);
+      text-align: right;
+      transition: transform var(--dur-mid) var(--ease-spring), color var(--dur-fast);
+    }
+    .index-row:hover .idx-arrow { color: var(--p51-white); transform: translateX(4px); }
+
+    /* ── pending placeholder ── */
+    .index-row.pending { opacity: 0.5; cursor: default; }
+    .index-row.pending::before { display: none; }
+    .index-row.pending:hover { padding-left: 0; }
+
+    /* ── invitation foot ── */
+    .a-foot {
+      padding: var(--sp-16) clamp(24px, 6vw, 80px) var(--sp-12);
+      border-top: 1px solid var(--p51-border-hi);
+    }
+    .a-foot-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--sp-6);
+      flex-wrap: wrap;
+      max-width: 1200px;
+    }
+    .a-foot-text {
+      max-width: 520px;
+    }
+    .a-foot-headline {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .a-foot-headline em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .a-foot-sub {
+      margin-top: var(--sp-3);
+      font-size: 14px;
+      color: var(--p51-t-70);
+      line-height: 1.7;
+    }
+    .a-foot-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      align-items: flex-start;
+      margin-top: var(--sp-3);
+    }
+    .btn {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      padding: 14px 28px;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      cursor: none;
+      transition: all var(--dur-fast) var(--ease-expo);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--p51-white); color: var(--p51-black); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .btn:hover .arrow { transform: translateX(4px); }
+
+    .page-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-70);
+      text-transform: uppercase;
+      padding: var(--sp-2) 0;
+      transition: color var(--dur-fast), letter-spacing var(--dur-mid);
+      cursor: none;
+    }
+    .page-link:hover { color: var(--p51-white); letter-spacing: 0.18em; }
+    .page-link .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .page-link:hover .arrow { transform: translateX(8px); }
+
+    /* ── reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 800ms var(--ease-expo),
+                  transform 800ms var(--ease-expo);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ── responsive ── */
+    @media (max-width: 880px) {
+      .index-row {
+        grid-template-columns: 32px 1fr;
+        gap: var(--sp-2);
+      }
+      .idx-tags, .idx-year, .idx-arrow { display: none; }
+    }
+  </style>
+</head>
+<body class="entering">
+
+  <!-- meta strip -->
+  <div class="meta-strip">
+    <span>P51 / ATELIER</span>
+    <a href="synthesis.html">← synthesis</a>
+  </div>
+
+  <main>
+
+    <!-- ─── HERO ──────────────────────────────────── -->
+    <section class="a-hero">
+      <div class="a-hero-content">
+        <p class="a-eyebrow">The atelier · selected systems</p>
+        <h1 class="a-title">The work,<br/>in <em>chronicle form.</em></h1>
+        <p class="a-sub">
+          Not a portfolio. An archive. Each entry below is a system we shipped — dated, documented, stripped of marketing. Read them as lab notes, not pitch decks.
+        </p>
+        <div class="a-meta">
+          <span class="a-meta-item">entries<strong>04 · live</strong></span>
+          <span class="a-meta-item">format<strong>Chronicle, not portfolio</strong></span>
+          <span class="a-meta-item">last update<strong>2026 · Q2</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── INDEX ─────────────────────────────────── -->
+    <section class="index">
+
+      <div class="reveal index-row">
+        <span class="idx-num">01</span>
+        <div class="idx-title-block">
+          <h3 class="idx-title">Hear.ai — <em>Voice product platform</em></h3>
+          <p class="idx-desc">End-to-end product design and frontend architecture for an AI-powered voice analytics suite. Shipped in six weeks.</p>
+        </div>
+        <div class="idx-tags">
+          <span class="idx-tag">product</span>
+          <span class="idx-tag">react</span>
+          <span class="idx-tag">ios</span>
+        </div>
+        <span class="idx-year">2024</span>
+        <span class="idx-arrow">→</span>
+      </div>
+
+      <div class="reveal index-row">
+        <span class="idx-num">02</span>
+        <div class="idx-title-block">
+          <h3 class="idx-title">P51 — <em>Foundational design system</em></h3>
+          <p class="idx-desc">A complete visual language. Tokens, components, motion — all derived from a single geometric primitive. The infrastructure of a masterpiece.</p>
+        </div>
+        <div class="idx-tags">
+          <span class="idx-tag">system</span>
+          <span class="idx-tag">tokens</span>
+          <span class="idx-tag">open</span>
+        </div>
+        <span class="idx-year">2025</span>
+        <span class="idx-arrow">→</span>
+      </div>
+
+      <div class="reveal index-row">
+        <span class="idx-num">03</span>
+        <div class="idx-title-block">
+          <h3 class="idx-title">Inbound triage <em>engine</em></h3>
+          <p class="idx-desc">An AI-augmented intake system that classifies, prioritises, and routes lead-flow without human review. Make.com, OpenAI, internal scoring.</p>
+        </div>
+        <div class="idx-tags">
+          <span class="idx-tag">automation</span>
+          <span class="idx-tag">ai</span>
+          <span class="idx-tag">make.com</span>
+        </div>
+        <span class="idx-year">2025</span>
+        <span class="idx-arrow">→</span>
+      </div>
+
+      <div class="reveal index-row">
+        <span class="idx-num">04</span>
+        <div class="idx-title-block">
+          <h3 class="idx-title">Human Design — <em>chart engine</em></h3>
+          <p class="idx-desc">A precise rendering of Human Design charts as a 'design science' interface. The chart-color palette became scientific data, not decoration.</p>
+        </div>
+        <div class="idx-tags">
+          <span class="idx-tag">data</span>
+          <span class="idx-tag">visual</span>
+          <span class="idx-tag">esoteric</span>
+        </div>
+        <span class="idx-year">2025</span>
+        <span class="idx-arrow">→</span>
+      </div>
+
+      <div class="reveal index-row pending">
+        <span class="idx-num">05</span>
+        <div class="idx-title-block">
+          <h3 class="idx-title">Project — <em>under audit</em></h3>
+          <p class="idx-desc">Live engagement, not yet documentable. The chronicle is updated when the engagement closes.</p>
+        </div>
+        <div class="idx-tags">
+          <span class="idx-tag">pending</span>
+        </div>
+        <span class="idx-year">2026</span>
+        <span class="idx-arrow">·</span>
+      </div>
+
+    </section>
+
+    <!-- ─── FOOT · INVITATION ─────────────────────── -->
+    <section class="a-foot">
+      <div class="a-foot-inner reveal">
+        <div class="a-foot-text">
+          <h2 class="a-foot-headline">Begin a <em>new chronicle.</em></h2>
+          <p class="a-foot-sub">
+            Two seats remain through Q3. The intake is intentionally hard — sit with it before submitting.
+          </p>
+        </div>
+        <div class="a-foot-actions">
+          <a href="mailto:ofir@hear.ai?subject=Project%2051%20%E2%80%94%20Intake" class="btn btn-primary">
+            Begin the intake <span class="arrow">→</span>
+          </a>
+          <a href="library.html" class="page-link" onclick="event.preventDefault(); P51.crossTo('library.html')">
+            Visit the library <span class="arrow">→</span>
+          </a>
+          <a href="synthesis.html" class="page-link" onclick="event.preventDefault(); P51.crossTo('synthesis.html')">
+            <span class="arrow">←</span> Back to synthesis
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="p51.js"></script>
+  <script>
+    requestAnimationFrame(() => document.body.classList.remove('entering'));
+
+    P51.initCursor();
+    P51.compass({ label: 'atelier' });
+    P51.versionStamp({ text: 'v.1 · 0' });
+    P51.trackVisit();
+
+    /* ── reveal on scroll ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

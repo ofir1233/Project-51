@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#060606"/>
+      <stop offset="1" stop-color="#0d0d0d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- mark -->
+  <g transform="translate(96,150) scale(3.4)">
+    <rect x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.45"/>
+    <rect x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.45"/>
+    <rect x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+  </g>
+
+  <!-- text -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#f0ede8">
+    <text x="540" y="240" font-size="22" letter-spacing="4" opacity="0.55">PROJECT 51</text>
+    <text x="540" y="350" font-size="84" font-weight="200" letter-spacing="-2">Two disciplines.</text>
+    <text x="540" y="445" font-size="84" font-style="italic" font-family="Instrument Serif, Georgia, serif" fill="#bcbcb8">One precise output.</text>
+    <text x="540" y="535" font-size="20" letter-spacing="3" opacity="0.5">DESIGN + AUTOMATION · BOUTIQUE · EST. 2026</text>
+  </g>
+</svg>

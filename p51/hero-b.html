@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hero · Variation B — Spec Sheet</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+    /* ── Variation B: Spec Sheet ─────────────────────────────────
+       Concept: technical document opener. The mark is the subject,
+       featured large on the left. Title + body sit to the right.
+       Meta is a prominent 4-column spec table at the bottom.
+       Reads like a calibration document or product brief.
+    ──────────────────────────────────────────────────────────── */
+
+    body { line-height: 1.5; }
+
+    /* meta strip top */
+    .vb-strip {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: var(--sp-3) clamp(28px, 6vw, 80px);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      z-index: 10;
+    }
+
+    /* corner crop marks for the document */
+    .vb-crop {
+      position: fixed;
+      width: 14px; height: 14px;
+      border: 1px solid var(--p51-t-15);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .vb-crop.tl { top: 32px; left: 32px; border-right: none; border-bottom: none; }
+    .vb-crop.tr { top: 32px; right: 32px; border-left: none; border-bottom: none; }
+    .vb-crop.bl { bottom: 32px; left: 32px; border-right: none; border-top: none; }
+    .vb-crop.br { bottom: 32px; right: 32px; border-left: none; border-top: none; }
+
+    .vb-hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(80px, 9vw, 140px) clamp(48px, 7vw, 96px) clamp(40px, 5vw, 64px);
+    }
+
+    /* main row: mark on left, copy on right */
+    .vb-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: clamp(48px, 7vw, 120px);
+      align-items: center;
+    }
+
+    .vb-mark-cell {
+      position: relative;
+    }
+    .vb-mark {
+      width: clamp(180px, 22vw, 320px);
+      height: clamp(180px, 22vw, 320px);
+      display: block;
+    }
+    .vb-mark-tag {
+      margin-top: var(--sp-3);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vb-mark-tag::before {
+      content: '';
+      width: 18px; height: 1px;
+      background: var(--p51-t-30);
+    }
+
+    .vb-copy {
+      max-width: 64ch;
+    }
+    .vb-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      margin-bottom: var(--sp-4);
+    }
+    .vb-eyebrow::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--chart-sacral);
+    }
+    .vb-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--chart-sacral);
+      box-shadow: 0 0 12px rgba(200,255,0,0.5);
+      animation: vbPulse 2.4s var(--ease-inout) infinite;
+    }
+    @keyframes vbPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)} }
+
+    .vb-headline {
+      font-family: var(--font-display);
+      font-weight: 100;
+      font-size: clamp(48px, 7vw, 116px);
+      line-height: 0.94;
+      letter-spacing: -0.04em;
+      margin: 0 0 var(--sp-4) 0;
+    }
+    .vb-headline span { display: block; }
+    .vb-headline .vb-line-2 { color: var(--p51-t-50); }
+
+    .vb-body {
+      font-size: clamp(14px, 1.3vw, 16px);
+      line-height: 1.7;
+      color: var(--p51-t-70);
+      max-width: 60ch;
+    }
+
+    /* spec table at the bottom — the brief */
+    .vb-spec {
+      margin-top: clamp(48px, 6vw, 96px);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--p51-border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(20px, 3vw, 48px);
+    }
+    .vb-spec-cell {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+    .vb-spec-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .vb-spec-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--p51-white);
+      text-transform: uppercase;
+    }
+    .vb-spec-value.accent { color: var(--chart-sacral); }
+
+    @media (max-width: 880px) {
+      .vb-main { grid-template-columns: 1fr; gap: var(--sp-6); }
+      .vb-mark { width: 160px; height: 160px; }
+      .vb-spec { grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+    }
+
+    .vb-stamp {
+      position: fixed;
+      bottom: 18px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      z-index: 50;
+    }
+    .vb-stamp a { color: var(--p51-t-50); }
+    .vb-stamp a:hover { color: var(--p51-white); }
+  </style>
+</head>
+<body>
+
+  <div class="vb-strip">
+    <span>P51 / SYNTHESIS</span>
+    <span>01 / WORLDVIEW</span>
+  </div>
+  <span class="vb-crop tl"></span>
+  <span class="vb-crop tr"></span>
+  <span class="vb-crop bl"></span>
+  <span class="vb-crop br"></span>
+
+  <section class="vb-hero">
+
+    <div class="vb-main">
+      <div class="vb-mark-cell">
+        <svg class="vb-mark" viewBox="0 0 110 110" aria-hidden="true">
+          <rect x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="1.5" opacity="0.45"/>
+          <rect x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="1.5" opacity="0.45"/>
+          <rect x="30" y="30" width="50" height="50" fill="#f0ede8" opacity="0.92"/>
+        </svg>
+        <span class="vb-mark-tag">subject · the mark</span>
+      </div>
+
+      <div class="vb-copy">
+        <span class="vb-eyebrow">A boutique agency · est. 2026 <span class="dot"></span></span>
+        <h1 class="vb-headline">
+          <span>Two disciplines.</span>
+          <span class="vb-line-2">One precise output.</span>
+        </h1>
+        <p class="vb-body">
+          Project 51 is the synthesis of two complete disciplines — visual craft and system engineering. The work we ship looks designed. It also runs. Both halves are non-negotiable.
+        </p>
+      </div>
+    </div>
+
+    <div class="vb-spec">
+      <div class="vb-spec-cell">
+        <span class="vb-spec-label">disciplines</span>
+        <span class="vb-spec-value">Design + Automation</span>
+      </div>
+      <div class="vb-spec-cell">
+        <span class="vb-spec-label">size</span>
+        <span class="vb-spec-value">Two founders</span>
+      </div>
+      <div class="vb-spec-cell">
+        <span class="vb-spec-label">model</span>
+        <span class="vb-spec-value">Boutique · Selective</span>
+      </div>
+      <div class="vb-spec-cell">
+        <span class="vb-spec-label">ratio</span>
+        <span class="vb-spec-value accent">0.625</span>
+      </div>
+    </div>
+
+  </section>
+
+  <span class="vb-stamp"><a href="hero-a">← View A</a> &nbsp; | &nbsp; Variation B · Spec Sheet</span>
+
+</body>
+</html>

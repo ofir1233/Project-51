@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project 51 — The Threshold</title>
+  <meta name="description" content="Two disciplines. One precise output. The opening node of Project 51."/>
+  <meta name="theme-color" content="#060606"/>
+  <link rel="canonical" href="https://nona-portfolio-eight.vercel.app/p51/"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Project 51 — The Threshold"/>
+  <meta property="og:description" content="Two disciplines. One precise output."/>
+  <meta property="og:url" content="https://nona-portfolio-eight.vercel.app/p51/"/>
+  <meta property="og:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       THRESHOLD · NODE 01
+    ═══════════════════════════════════════════════════════════ */
+
+    body {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      transition: opacity 600ms ease;
+    }
+
+    .threshold {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* faint grid background */
+    .threshold::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(240,237,232,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,237,232,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── composition · vertically centred, biased -5% ── */
+    .threshold-composition {
+      position: relative;
+      transform: translateY(-5%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* mark — fade in at t=200ms */
+    .threshold-mark {
+      opacity: 0;
+      animation: t-fade 1500ms var(--ease-expo) 200ms forwards;
+    }
+
+    /* logotype — fade in at t=800ms */
+    .threshold-logotype {
+      margin-top: var(--sp-12);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-50);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: t-fade-50 1500ms var(--ease-expo) 800ms forwards;
+    }
+
+    .threshold-logotype .dot {
+      display: inline-block;
+      transform: translateY(-2px);
+      margin: 0 6px;
+    }
+
+    /* koan — fade in at t=1500ms */
+    .threshold-koan {
+      margin-top: var(--sp-6);
+      opacity: 0;
+      animation: t-fade-koan 1500ms var(--ease-expo) 1500ms forwards;
+    }
+
+    /* the inner words override the wrapper opacity once revealed */
+    .threshold-koan .word {
+      transition-delay: calc(var(--word-i, 0) * 80ms + 1700ms);
+    }
+
+    /* ── begin gesture · bottom of viewport ── */
+    .begin-gesture {
+      position: fixed;
+      bottom: var(--sp-12);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-3);
+      opacity: 0;
+      animation: t-fade-50 600ms var(--ease-expo) 2400ms forwards;
+      z-index: 10;
+    }
+    .begin-gesture .rule {
+      width: 40px;
+      height: 1px;
+      background: var(--p51-t-30);
+      transition: width var(--dur-mid) var(--ease-expo), background var(--dur-fast);
+    }
+    .begin-gesture button {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      padding: var(--sp-1) var(--sp-2);
+      transition: color var(--dur-fast);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .begin-gesture:hover button { color: var(--p51-white); }
+    .begin-gesture:hover .rule { width: 64px; background: var(--p51-white); }
+    .begin-gesture .arrow {
+      transition: transform var(--dur-mid) var(--ease-spring);
+    }
+    .begin-gesture:hover .arrow { transform: translateY(3px); }
+
+    /* idle pulse hint after 7s if no input */
+    @keyframes idle-pulse {
+      0%, 100% { opacity: 0.5; }
+      50%      { opacity: 1; }
+    }
+    .begin-gesture.idle button { animation: idle-pulse 2400ms ease-in-out infinite; }
+
+    /* ── reveal keyframes ── */
+    @keyframes t-fade {
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes t-fade-50 {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 0.5; transform: translateY(0); }
+    }
+    @keyframes t-fade-koan {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── exiting state · triggered on begin click ── */
+    body.exiting .threshold-logotype,
+    body.exiting .threshold-koan,
+    body.exiting .begin-gesture {
+      opacity: 0;
+      transition: opacity 400ms ease;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 640px) {
+      .threshold-logotype { margin-top: var(--sp-8); }
+      .threshold-koan { padding: 0 var(--sp-3); }
+      .meta-strip { font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- meta strip -->
+  <div class="meta-strip">
+    <span>P51 / NODE · 01 / THRESHOLD</span>
+  </div>
+
+  <!-- the composition -->
+  <main class="threshold">
+    <div class="threshold-composition">
+
+      <!-- mark mounts here via JS (breathing) -->
+      <div class="threshold-mark" id="markMount"></div>
+
+      <!-- logotype -->
+      <div class="threshold-logotype">PROJECT<span class="dot">·</span>51</div>
+
+      <!-- koan -->
+      <p class="koan threshold-koan" id="koanEl">Two disciplines. One precise output.</p>
+
+    </div>
+
+    <!-- begin gesture -->
+    <div class="begin-gesture" id="beginGesture">
+      <div class="rule"></div>
+      <button id="beginBtn">
+        BEGIN
+        <span class="arrow">↓</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- compass + version mount via JS -->
+
+  <script src="p51.js"></script>
+  <script>
+    /* ── mount the mark · breathing ── */
+    const markEl = P51.mark({ size: 120, animate: 'breathe', strokeWidth: 1.5 });
+    document.getElementById('markMount').appendChild(markEl);
+
+    /* ── cursor ── */
+    P51.initCursor();
+
+    /* ── compass + version ── */
+    /* compass mounts but is hidden during initial reveal · appears at t=2400ms */
+    const compassEl = P51.compass({ label: 'threshold' });
+    compassEl.style.opacity = '0';
+    compassEl.style.transition = 'opacity 1000ms ease';
+    setTimeout(() => { compassEl.style.opacity = '1'; }, 3000);
+    P51.versionStamp({ text: 'v.1 · 0' });
+
+    /* ── koan · words split + scheduled reveal ── */
+    const koanEl = document.getElementById('koanEl');
+    P51.koan(koanEl);
+    /* koan reveals at t=1500ms via wrapper animation; words follow */
+    setTimeout(() => koanEl.classList.add('revealed'), 1700);
+
+    /* ── visit tracking ── */
+    const visits = P51.trackVisit();
+
+    /* ── idle hint after 7s ── */
+    let idleTimer = setTimeout(() => {
+      document.getElementById('beginGesture').classList.add('idle');
+    }, 7000);
+
+    /* clear idle hint on any interaction */
+    document.addEventListener('mousemove', () => {
+      clearTimeout(idleTimer);
+      document.getElementById('beginGesture').classList.remove('idle');
+    }, { once: true });
+
+    /* ── BEGIN gesture · cross to synthesis ── */
+    function beginCross() {
+      document.body.classList.add('exiting');
+      P51.crossTo('synthesis.html', { onMark: markEl });
+    }
+
+    document.getElementById('beginBtn').addEventListener('click', beginCross);
+
+    /* keyboard: Enter or ↓ also triggers */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        beginCross();
+      }
+    });
+
+    /* scroll = also crosses (the gesture is generous) */
+    let crossed = false;
+    document.addEventListener('wheel', (e) => {
+      if (crossed) return;
+      if (e.deltaY > 30) {
+        crossed = true;
+        beginCross();
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>

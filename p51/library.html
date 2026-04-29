@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project 51 — The Library · Components as Masterpieces</title>
+  <meta name="description" content="A live surface where every primitive of the Project 51 system is shown in motion. Geometry, typography, buttons, forms, cards, motion."/>
+  <meta name="theme-color" content="#060606"/>
+  <link rel="canonical" href="https://nona-portfolio-eight.vercel.app/p51/library"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Project 51 — The Library"/>
+  <meta property="og:description" content="Every primitive of the Project 51 design system, shown in motion."/>
+  <meta property="og:url" content="https://nona-portfolio-eight.vercel.app/p51/library"/>
+  <meta property="og:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       LIBRARY · interactive component showcase
+       Every component, a masterpiece.
+    ═══════════════════════════════════════════════════════════ */
+
+    body {
+      transition: opacity 800ms ease;
+      line-height: 1.5;
+    }
+    body.entering { opacity: 0; }
+
+    main { padding-top: var(--sp-7); }
+
+    /* ── header ── */
+    .lib-hero {
+      padding: var(--sp-20) clamp(24px, 6vw, 80px) var(--sp-12);
+      border-bottom: 1px solid var(--p51-border);
+      position: relative;
+    }
+    .lib-hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--p51-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--p51-border) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse at left center, black 0%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at left center, black 0%, transparent 75%);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .lib-hero-content {
+      position: relative;
+      max-width: 1200px;
+    }
+    .lib-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-50);
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: var(--sp-3);
+    }
+    .lib-eyebrow::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--p51-t-50);
+    }
+    .lib-title {
+      font-size: clamp(48px, 8vw, 116px);
+      font-weight: 100;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      max-width: 14ch;
+    }
+    .lib-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--p51-t-70);
+    }
+    .lib-sub {
+      margin-top: var(--sp-5);
+      font-size: clamp(15px, 1.5vw, 17px);
+      color: var(--p51-t-50);
+      max-width: 600px;
+      line-height: 1.7;
+    }
+    .lib-toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+      margin-top: var(--sp-8);
+      padding-top: var(--sp-4);
+      border-top: 1px solid var(--p51-border);
+    }
+    .lib-toc-item {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-50);
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--p51-border);
+      border-radius: 100px;
+      transition: all var(--dur-fast);
+      cursor: none;
+    }
+    .lib-toc-item:hover { color: var(--p51-white); border-color: var(--p51-border-hi); background: var(--p51-t-04); }
+
+    /* ── section · each component family ── */
+    .lib-section {
+      padding: var(--sp-16) clamp(24px, 6vw, 80px) var(--sp-12);
+      border-bottom: 1px solid var(--p51-border);
+      position: relative;
+    }
+    .lib-section-num {
+      position: absolute;
+      top: var(--sp-6);
+      right: clamp(24px, 6vw, 80px);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-15);
+      text-transform: uppercase;
+    }
+    .lib-section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-10);
+      padding-bottom: var(--sp-5);
+      border-bottom: 1px solid var(--p51-border);
+    }
+    .lib-section-title {
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 100;
+      line-height: 1;
+      letter-spacing: -0.025em;
+    }
+    .lib-section-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .lib-section-desc {
+      font-size: 13px;
+      color: var(--p51-t-50);
+      line-height: 1.7;
+      max-width: 380px;
+    }
+
+    /* ── logo lockups · stacked rows ── */
+    .logo-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      padding: var(--sp-7) var(--sp-6);
+      margin-bottom: var(--sp-3);
+      background: var(--p51-black);
+      border: 1px solid var(--p51-border);
+      border-radius: 12px;
+      transition: border-color var(--dur-mid);
+    }
+    .logo-row:hover { border-color: var(--p51-border-hi); }
+    .logo-row-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--sp-3);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      flex-wrap: wrap;
+    }
+    .logo-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-4);
+      padding: var(--sp-7) var(--sp-3);
+      min-height: 140px;
+    }
+    .logo-display-stacked {
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .logo-mark { flex-shrink: 0; display: block; }
+    .logo-rule {
+      width: 1px;
+      height: 56px;
+      background: var(--p51-border-hi);
+      flex-shrink: 0;
+    }
+    .logo-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      line-height: 0.92;
+    }
+    .logo-text {
+      color: var(--p51-white);
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .logo-text-mono {
+      font-family: var(--font-mono);
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .logo-text-mono .thin {
+      color: var(--p51-t-30);
+      margin: 0 6px;
+    }
+    .logo-text-mono .dot-accent {
+      color: var(--chart-sacral);
+      margin: 0 10px;
+      font-size: 0.5em;
+      vertical-align: middle;
+      text-shadow: 0 0 12px rgba(200,255,0,0.55);
+    }
+    /* size variants of A's mono wordmark */
+    .logo-text-compact { font-size: 13px; letter-spacing: 0.22em; }
+    .logo-text-hero    { font-size: 36px; letter-spacing: 0.16em; }
+    .logo-text-wide    { font-size: 16px; letter-spacing: 0.42em; }
+
+    /* divider variants */
+    .logo-rule-sm { height: 28px; }
+    .logo-rule-lg { height: 88px; }
+
+    /* gapless variant — generous space, no rule */
+    .logo-display-gapless { gap: var(--sp-6); }
+
+    .logo-text-serif {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 44px;
+      letter-spacing: -0.02em;
+    }
+    .logo-text-display {
+      font-family: var(--font-display);
+      font-weight: 200;
+      font-size: 56px;
+      letter-spacing: -0.025em;
+    }
+    .logo-text-display .serif {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-70);
+    }
+    .logo-text-md   { font-size: 36px; }
+    .logo-text-sm   { font-size: 13px; letter-spacing: 0.22em; }
+    .logo-text-xs   { font-size: 9px;  letter-spacing: 0.24em; }
+    .logo-text-muted { color: var(--p51-t-50); }
+    .logo-text-caption {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      margin-top: var(--sp-2);
+    }
+
+    /* lockup F — framed stamp */
+    .logo-stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-3) var(--sp-4);
+      border: 1px solid var(--p51-t-30);
+      border-radius: 4px;
+    }
+    .logo-stamp-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      line-height: 1.1;
+    }
+
+    @media (max-width: 640px) {
+      .logo-display { flex-direction: column; gap: var(--sp-3); padding: var(--sp-5) var(--sp-2); }
+      .logo-rule { width: 56px; height: 1px; }
+      .logo-text-serif { font-size: 32px; }
+      .logo-text-display { font-size: 40px; }
+      .logo-text-md { font-size: 28px; }
+    }
+
+    /* ── stage · a single component card ── */
+    .stage {
+      display: grid;
+      grid-template-columns: 1fr 1px 280px;
+      gap: var(--sp-5);
+      align-items: stretch;
+      background: var(--p51-black);
+      border: 1px solid var(--p51-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1px;
+      transition: border-color var(--dur-mid);
+    }
+    .stage:hover { border-color: var(--p51-border-hi); }
+    .stage-canvas {
+      padding: var(--sp-8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+      min-height: 220px;
+      position: relative;
+      background-image:
+        linear-gradient(rgba(240,237,232,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,237,232,0.018) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .stage-divider {
+      background: var(--p51-border);
+    }
+    .stage-info {
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      background: var(--p51-ink);
+    }
+    .stage-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .stage-name {
+      font-size: 18px;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+    }
+    .stage-name em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .stage-desc {
+      font-size: 12px;
+      color: var(--p51-t-50);
+      line-height: 1.7;
+    }
+    .stage-meta {
+      margin-top: auto;
+      padding-top: var(--sp-2);
+      border-top: 1px solid var(--p51-border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ────────────────────────────────────────────────
+       GEOMETRY STAGE
+    ──────────────────────────────────────────────── */
+    .geo-stage-row {
+      display: flex;
+      gap: var(--sp-5);
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+    .geo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: none;
+    }
+    .geo-block-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .geo-block:hover .geo-block-label { color: var(--p51-white); }
+    .geo-block .p51-mark { transition: transform var(--dur-mid) var(--ease-spring); }
+    .geo-block:hover .p51-mark { transform: scale(1.1); }
+
+    /* ────────────────────────────────────────────────
+       TYPE STAGE
+    ──────────────────────────────────────────────── */
+    .type-stage {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: var(--sp-5) !important;
+      text-align: left;
+    }
+    .type-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: var(--sp-4);
+      align-items: baseline;
+      padding: var(--sp-2) 0;
+      border-top: 1px solid var(--p51-border);
+      width: 100%;
+    }
+    .type-meta {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.1em;
+      line-height: 1.7;
+    }
+    .type-meta b { display: block; font-weight: 400; color: var(--p51-t-50); }
+    .t-display  { font-size: 64px; font-weight: 100; line-height: 0.92; letter-spacing: -0.04em; }
+    .t-h1       { font-size: 32px; font-weight: 200; line-height: 1.05; letter-spacing: -0.02em; }
+    .t-serif    { font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 28px; color: var(--p51-t-70); }
+    .t-body     { font-size: 14px; font-weight: 300; line-height: 1.7; color: var(--p51-t-70); }
+    .t-mono     { font-family: var(--font-mono); font-size: 12px; font-weight: 300; color: var(--p51-t-50); }
+
+    /* ────────────────────────────────────────────────
+       BUTTONS
+    ──────────────────────────────────────────────── */
+    .btn {
+      font-family: var(--font-display);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      cursor: none;
+      transition: all var(--dur-fast) var(--ease-expo);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-sm  { font-size: 10px; padding: 6px 14px; }
+    .btn-md  { font-size: 12px; padding: 10px 22px; }
+    .btn-lg  { font-size: 13px; padding: 14px 28px; }
+    .btn-primary { background: var(--p51-white); color: var(--p51-black); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(240,237,232,0.08); }
+    .btn-secondary { border-color: var(--p51-border-hi); color: var(--p51-white); }
+    .btn-secondary:hover { border-color: var(--p51-white); background: var(--p51-t-04); }
+    .btn-ghost { color: var(--p51-t-70); }
+    .btn-ghost:hover { color: var(--p51-white); background: var(--p51-t-04); }
+    .btn .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .btn:hover .arrow { transform: translateX(4px); }
+    .btn-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      padding: 0;
+      justify-content: center;
+      border-color: var(--p51-border-hi);
+    }
+    .btn-icon:hover { border-color: var(--p51-white); background: var(--p51-t-04); }
+    .btn-icon svg { stroke: currentColor; }
+
+    /* ────────────────────────────────────────────────
+       FORMS
+    ──────────────────────────────────────────────── */
+    .form-stage {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: var(--sp-4) !important;
+      width: 100%;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+    }
+    .input, .textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--p51-border-hi);
+      color: var(--p51-white);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 300;
+      padding: 10px 0;
+      outline: none;
+      transition: border-color var(--dur-fast);
+      cursor: none;
+    }
+    .input:focus, .textarea:focus { border-bottom-color: var(--p51-white); }
+    .input::placeholder, .textarea::placeholder { color: var(--p51-t-30); }
+    .textarea { resize: vertical; min-height: 60px; }
+
+    .toggle-row {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--p51-t-70);
+      cursor: none;
+    }
+    .check {
+      appearance: none;
+      width: 14px; height: 14px;
+      border: 1px solid var(--p51-border-hi);
+      border-radius: 2px;
+      cursor: none;
+      transition: all var(--dur-fast);
+      position: relative;
+    }
+    .check:hover { border-color: var(--p51-t-50); }
+    .check:checked { background: var(--p51-white); border-color: var(--p51-white); }
+    .check:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px; top: 0;
+      width: 5px; height: 9px;
+      border-right: 1.5px solid var(--p51-black);
+      border-bottom: 1.5px solid var(--p51-black);
+      transform: rotate(45deg);
+    }
+    .switch {
+      position: relative;
+      width: 36px; height: 20px;
+      background: var(--p51-t-08);
+      border-radius: 100px;
+      border: 1px solid var(--p51-border-hi);
+      cursor: none;
+      transition: background var(--dur-fast);
+    }
+    .switch::after {
+      content: '';
+      position: absolute;
+      top: 1px; left: 1px;
+      width: 16px; height: 16px;
+      background: var(--p51-white);
+      border-radius: 50%;
+      transition: transform var(--dur-mid) var(--ease-expo);
+    }
+    .switch.on { background: var(--p51-white); }
+    .switch.on::after { transform: translateX(16px); background: var(--p51-black); }
+
+    /* ────────────────────────────────────────────────
+       CARDS
+    ──────────────────────────────────────────────── */
+    .card-stage {
+      align-items: stretch !important;
+      gap: var(--sp-3) !important;
+    }
+    .card {
+      flex: 1 1 200px;
+      background: var(--p51-ink);
+      border: 1px solid var(--p51-border);
+      border-radius: 8px;
+      padding: var(--sp-4);
+      transition: border-color var(--dur-mid), background var(--dur-mid), transform var(--dur-mid);
+      cursor: none;
+      min-height: 160px;
+    }
+    .card:hover {
+      border-color: var(--p51-border-hi);
+      background: var(--p51-surface);
+      transform: translateY(-2px);
+    }
+    .card-stat-num {
+      font-size: 48px;
+      font-weight: 100;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .card-stat-num em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+      font-size: 24px;
+    }
+    .card-stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      margin-top: 8px;
+    }
+    .card-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1.4;
+      letter-spacing: -0.005em;
+    }
+    .card-quote-cite {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      margin-top: var(--sp-2);
+      padding-top: var(--sp-2);
+      border-top: 1px solid var(--p51-border);
+    }
+
+    /* ────────────────────────────────────────────────
+       MOTION
+    ──────────────────────────────────────────────── */
+    .motion-stage {
+      gap: var(--sp-3) !important;
+      align-items: stretch !important;
+      flex-wrap: wrap;
+    }
+    .motion-card {
+      flex: 1 1 180px;
+      min-height: 120px;
+      background: var(--p51-ink);
+      border: 1px solid var(--p51-border);
+      border-radius: 8px;
+      padding: var(--sp-3);
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .motion-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--p51-t-04);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+    .motion-fill[data-ease="expo"]   { transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1); }
+    .motion-fill[data-ease="spring"] { transition: transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .motion-fill[data-ease="inout"]  { transition: transform 800ms cubic-bezier(0.65, 0, 0.35, 1); }
+    .motion-fill[data-ease="linear"] { transition: transform 800ms linear; }
+    .motion-card:hover .motion-fill { transform: scaleX(1); }
+    .motion-card-name { font-size: 14px; font-weight: 300; position: relative; z-index: 1; }
+    .motion-card-name em { font-family: var(--font-serif); font-style: italic; color: var(--p51-t-50); }
+    .motion-card-meta {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.06em;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* the intersection demo */
+    .intersection-demo {
+      width: 100%;
+      min-height: 240px;
+      background: var(--p51-ink);
+      border: 1px solid var(--p51-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .intersection-demo svg { width: 180px; height: 180px; }
+    .intersection-demo .sq-a {
+      transform-origin: center;
+      transition: transform 1200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .intersection-demo .sq-b {
+      transform-origin: center;
+      transition: transform 1200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .intersection-demo .core {
+      transition: opacity 800ms ease 600ms,
+                  transform 1000ms cubic-bezier(0.34, 1.56, 0.64, 1) 500ms;
+      transform-origin: center;
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    .intersection-demo:not(:hover) .sq-a { transform: translate(-15px, -15px); }
+    .intersection-demo:not(:hover) .sq-b { transform: translate(15px, 15px); }
+    .intersection-demo:hover .core { opacity: 1; transform: scale(1); }
+    .intersection-label {
+      position: absolute;
+      bottom: var(--sp-3);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* ────────────────────────────────────────────────
+       DATA / CHART
+    ──────────────────────────────────────────────── */
+    .chart-block {
+      width: 100%;
+      height: 160px;
+      position: relative;
+      padding: var(--sp-3);
+    }
+    .chart-block svg { width: 100%; height: 100%; }
+    .chart-block-label {
+      position: absolute;
+      top: 10px; left: 14px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .chart-block-value {
+      position: absolute;
+      bottom: 10px; right: 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--p51-white);
+    }
+
+    .data-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: var(--sp-2);
+      padding: var(--sp-2) 0;
+      border-bottom: 1px solid var(--p51-border);
+      cursor: none;
+      align-items: center;
+      transition: padding-left var(--dur-mid) var(--ease-expo);
+      position: relative;
+      overflow: hidden;
+    }
+    .data-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--p51-t-04);
+      transition: width var(--dur-mid) var(--ease-expo);
+    }
+    .data-row:hover::before { width: 100%; }
+    .data-row:hover { padding-left: var(--sp-2); }
+    .data-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.06em;
+    }
+    .data-title { font-size: 13px; font-weight: 300; }
+    .data-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── crosslinks ── */
+    .lib-foot {
+      padding: var(--sp-12) clamp(24px, 6vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+      border-top: 1px solid var(--p51-border-hi);
+    }
+    .page-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-70);
+      text-transform: uppercase;
+      padding: var(--sp-2) 0;
+      transition: color var(--dur-fast), letter-spacing var(--dur-mid);
+      cursor: none;
+    }
+    .page-link:hover { color: var(--p51-white); letter-spacing: 0.18em; }
+    .page-link .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .page-link:hover .arrow { transform: translateX(8px); }
+
+    /* ── reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 800ms var(--ease-expo),
+                  transform 800ms var(--ease-expo);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ── responsive ── */
+    @media (max-width: 880px) {
+      .stage { grid-template-columns: 1fr; }
+      .stage-divider { display: none; }
+      .lib-section-head { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body class="entering">
+
+  <!-- meta strip -->
+  <div class="meta-strip">
+    <span>P51 / LIBRARY</span>
+    <a href="synthesis.html">← synthesis</a>
+  </div>
+
+  <main>
+
+    <!-- ─── HERO ─────────────────────────────────────── -->
+    <section class="lib-hero">
+      <div class="lib-hero-grid"></div>
+      <div class="lib-hero-content">
+        <p class="lib-eyebrow">The library · v.1 · 12 stages</p>
+        <h1 class="lib-title">Components,<br/>as <em>masterpieces.</em></h1>
+        <p class="lib-sub">
+          A live surface where every primitive of the Project 51 system is shown in motion. Hover, click, type — every detail rewards the attention. Not a Figma file. Not documentation. The library is the proof.
+        </p>
+        <div class="lib-toc">
+          <a href="#logo" class="lib-toc-item">Logo</a>
+          <a href="#geometry" class="lib-toc-item">Geometry</a>
+          <a href="#typography" class="lib-toc-item">Typography</a>
+          <a href="#buttons" class="lib-toc-item">Buttons</a>
+          <a href="#forms" class="lib-toc-item">Forms</a>
+          <a href="#cards" class="lib-toc-item">Cards</a>
+          <a href="#motion" class="lib-toc-item">Motion</a>
+          <a href="#data" class="lib-toc-item">Data</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 00 · LOGO ───────────────────────────────── -->
+    <section class="lib-section reveal" id="logo">
+      <span class="lib-section-num">00 / LOGO</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Logo · the mark <em>+ wordmark.</em></h2>
+        <p class="lib-section-desc">Lockups — the brand mark wedded to <em>Project 51</em>, in every voice. Each is a working draft; pick the one that fits the moment, kill the rest.</p>
+      </div>
+
+      <!-- A2.1+ — Converge · GSAP timeline · the chosen lockup -->
+      <div class="logo-row">
+        <div class="logo-row-meta">
+          <span>A2.1+ · converge (gsap)</span>
+          <span>improved · staged timeline · spring on core · breath while held</span>
+        </div>
+        <div class="logo-display">
+          <svg id="anim-converge-gsap" class="logo-mark" width="40" height="40" viewBox="0 0 110 110" aria-hidden="true">
+            <rect class="sq sq-a" x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="3" opacity="0.45"/>
+            <rect class="sq sq-b" x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="3" opacity="0.45"/>
+            <rect class="core"     x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+          </svg>
+          <span class="logo-rule logo-rule-sm"></span>
+          <span class="logo-text logo-text-mono logo-text-compact">PROJECT<span class="thin">·</span>51</span>
+        </div>
+      </div>
+
+
+    </section>
+
+    <!-- ─── 01 · GEOMETRY ───────────────────────────── -->
+    <section class="lib-section reveal" id="geometry">
+      <span class="lib-section-num">01 / GEOMETRY</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Marks &amp; <em>geometry.</em></h2>
+        <p class="lib-section-desc">The mark, in every state. The same primitive, calibrated to the moment.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas">
+          <div class="geo-stage-row">
+            <div class="geo-block">
+              <div id="geoMark1"></div>
+              <span class="geo-block-label">— breathing</span>
+            </div>
+            <div class="geo-block">
+              <div id="geoMark2"></div>
+              <span class="geo-block-label">— static</span>
+            </div>
+            <div class="geo-block">
+              <div id="geoMark3"></div>
+              <span class="geo-block-label">— micro</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 01</span>
+          <h3 class="stage-name">P51 Mark<em>geometric primitive</em></h3>
+          <p class="stage-desc">Two squares, offset (+30, +30). The 50×50 intersection is filled. From this single primitive, every other component descends.</p>
+          <div class="stage-meta"><span>props: size, color, animate</span><span>SVG</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 02 · TYPOGRAPHY ─────────────────────────── -->
+    <section class="lib-section reveal" id="typography">
+      <span class="lib-section-num">02 / TYPOGRAPHY</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Typography <em>as hierarchy.</em></h2>
+        <p class="lib-section-desc">Three families. Weight does the work. Size carries rhythm.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas type-stage">
+          <div class="type-row"><div class="type-meta"><b>display</b>96 / 100</div><div class="t-display">51</div></div>
+          <div class="type-row"><div class="type-meta"><b>h1</b>40 / 200</div><div class="t-h1">Design Science</div></div>
+          <div class="type-row"><div class="type-meta"><b>serif</b>32 / italic</div><div class="t-serif">in translation.</div></div>
+          <div class="type-row"><div class="type-meta"><b>body</b>14 / 300</div><div class="t-body">Every element serves the system. Every line carries weight.</div></div>
+          <div class="type-row"><div class="type-meta"><b>mono</b>12 / 300</div><div class="t-mono">intersection_ratio: 0.625 · base_unit: 8px</div></div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 02</span>
+          <h3 class="stage-name">Type System<em>three families</em></h3>
+          <p class="stage-desc">Inter for system. Instrument Serif (italic) for editorial accent. JetBrains Mono for data, code, and labels.</p>
+          <div class="stage-meta"><span>scale: 10 → 96</span><span>3 families</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 03 · BUTTONS ───────────────────────────── -->
+    <section class="lib-section reveal" id="buttons">
+      <span class="lib-section-num">03 / BUTTONS</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Buttons &amp; <em>actions.</em></h2>
+        <p class="lib-section-desc">Four variants. Three sizes. Every state precise.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas">
+          <button class="btn btn-primary btn-md">Primary action <span class="arrow">→</span></button>
+          <button class="btn btn-secondary btn-md">Secondary</button>
+          <button class="btn btn-ghost btn-md">Ghost link</button>
+          <button class="btn btn-icon btn-md" title="Icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+              <path d="M5 12 L19 12 M14 7 L19 12 L14 17"/>
+            </svg>
+          </button>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 03 · variants</span>
+          <h3 class="stage-name">Buttons<em>4 variants</em></h3>
+          <p class="stage-desc">Primary inverts the surface. Secondary holds a hairline. Ghost recedes to 70% opacity. Icon is a 36×36 disc.</p>
+          <div class="stage-meta"><span>states: default, hover, active</span><span>radius: 100px</span></div>
+        </div>
+      </div>
+
+      <div class="stage" style="margin-top: 1px;">
+        <div class="stage-canvas">
+          <button class="btn btn-secondary btn-sm">Small / 28</button>
+          <button class="btn btn-secondary btn-md">Medium / 38</button>
+          <button class="btn btn-secondary btn-lg">Large / 46</button>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 03 · sizes</span>
+          <h3 class="stage-name">Sizes<em>three steps</em></h3>
+          <p class="stage-desc">Heights aligned to the 8-pixel rhythm. The system collapses to one size when in doubt.</p>
+          <div class="stage-meta"><span>8sp grid</span><span>28 / 38 / 46</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 04 · FORMS ─────────────────────────────── -->
+    <section class="lib-section reveal" id="forms">
+      <span class="lib-section-num">04 / FORMS</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Forms &amp; <em>inputs.</em></h2>
+        <p class="lib-section-desc">No boxes. Inputs are bottom-rule fields. The line is the field.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas form-stage">
+          <div class="field">
+            <label class="field-label">Full name</label>
+            <input class="input" placeholder="ofir n."/>
+          </div>
+          <div class="field">
+            <label class="field-label">Project brief</label>
+            <textarea class="textarea" placeholder="tell me about the system you're building."></textarea>
+          </div>
+          <div class="toggle-row">
+            <label class="check-label"><input type="checkbox" class="check" checked/> System updates</label>
+            <label class="check-label"><input type="checkbox" class="check"/> Newsletter</label>
+            <span class="check-label"><span class="switch on" onclick="this.classList.toggle('on')"></span> Production mode</span>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 04</span>
+          <h3 class="stage-name">Form Fields<em>line as field</em></h3>
+          <p class="stage-desc">The hairline beneath each field is the input. On focus it becomes solid white. No backgrounds. No borders. Every field type follows the same rule.</p>
+          <div class="stage-meta"><span>input · textarea · check · switch</span><span>fully keyboard</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 05 · CARDS ─────────────────────────────── -->
+    <section class="lib-section reveal" id="cards">
+      <span class="lib-section-num">05 / CARDS</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Cards <em>as containers.</em></h2>
+        <p class="lib-section-desc">Three patterns. Stat. Data. Quote. Each with one job.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas card-stage">
+          <div class="card">
+            <div class="card-stat-num">128<em>×</em></div>
+            <div class="card-stat-label">components shipped</div>
+            <p style="font-family: var(--font-mono); font-size: 10px; color: var(--p51-t-50); margin-top: var(--sp-2); padding-top: var(--sp-2); border-top: 1px solid var(--p51-border);">↑ 24% vs. last quarter</p>
+          </div>
+          <div class="card">
+            <div class="card-stat-num">0.625</div>
+            <div class="card-stat-label">intersection ratio</div>
+            <p style="font-family: var(--font-mono); font-size: 10px; color: var(--p51-t-50); margin-top: var(--sp-2); padding-top: var(--sp-2); border-top: 1px solid var(--p51-border);">geometric constant</p>
+          </div>
+          <div class="card">
+            <p class="card-quote">"What we return is a system, not a deliverable."</p>
+            <p class="card-quote-cite">— Founders' note</p>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 05</span>
+          <h3 class="stage-name">Card Patterns<em>stat · data · quote</em></h3>
+          <p class="stage-desc">Three shapes cover ninety percent of layout needs. No drop shadows. Hover lifts subtly via transform.</p>
+          <div class="stage-meta"><span>radius: 8px</span><span>border-only</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 06 · MOTION ────────────────────────────── -->
+    <section class="lib-section reveal" id="motion">
+      <span class="lib-section-num">06 / MOTION</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Motion <em>as logic.</em></h2>
+        <p class="lib-section-desc">Things move because they are aligning, revealing, or making space. Never to entertain.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas motion-stage">
+          <div class="motion-card">
+            <div class="motion-fill" data-ease="expo"></div>
+            <span class="motion-card-name">Expo <em>out</em></span>
+            <span class="motion-card-meta">cubic-bezier(0.16, 1, 0.3, 1)<br/>default · decisive arrival</span>
+          </div>
+          <div class="motion-card">
+            <div class="motion-fill" data-ease="spring"></div>
+            <span class="motion-card-name">Spring</span>
+            <span class="motion-card-meta">cubic-bezier(0.34, 1.56, 0.64, 1)<br/>tactile · reserved for delight</span>
+          </div>
+          <div class="motion-card">
+            <div class="motion-fill" data-ease="inout"></div>
+            <span class="motion-card-name">In-out</span>
+            <span class="motion-card-meta">cubic-bezier(0.65, 0, 0.35, 1)<br/>continuous · loops</span>
+          </div>
+          <div class="motion-card">
+            <div class="motion-fill" data-ease="linear"></div>
+            <span class="motion-card-name">Linear</span>
+            <span class="motion-card-meta">linear<br/>mechanical · progress only</span>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 06 · easing</span>
+          <h3 class="stage-name">Easing Curves<em>hover to feel</em></h3>
+          <p class="stage-desc">Four curves cover everything. Default to expo-out. Spring is rare. Linear is mechanical only.</p>
+          <div class="stage-meta"><span>800ms reference</span><span>4 curves</span></div>
+        </div>
+      </div>
+
+      <div class="stage" style="margin-top: 1px;">
+        <div class="stage-canvas">
+          <div class="intersection-demo">
+            <svg viewBox="0 0 110 110">
+              <rect class="sq-a" x="0" y="0" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="1.5" opacity="0.4"/>
+              <rect class="sq-b" x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="1.5" opacity="0.4"/>
+              <rect class="core" x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+            </svg>
+            <span class="intersection-label">hover · the squares find their core</span>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 06 · signature</span>
+          <h3 class="stage-name">The Intersection<em>signature transition</em></h3>
+          <p class="stage-desc">The mark's geometry, played out as motion. Two parts converge, the core crystallises last. Used for hero entrances and result-revealing moments.</p>
+          <div class="stage-meta"><span>1200ms total</span><span>3-stage</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 07 · DATA ─────────────────────────────── -->
+    <section class="lib-section reveal" id="data">
+      <span class="lib-section-num">07 / DATA</span>
+
+      <div class="lib-section-head">
+        <h2 class="lib-section-title">Data <em>as structure.</em></h2>
+        <p class="lib-section-desc">Information as hairlines. The chart-color palette appears here — and only here.</p>
+      </div>
+
+      <div class="stage">
+        <div class="stage-canvas" style="display: block; padding: 0;">
+          <div class="chart-block">
+            <span class="chart-block-label">EFFICIENCY · INDEX</span>
+            <svg viewBox="0 0 320 100" preserveAspectRatio="none">
+              <line x1="0" y1="80" x2="320" y2="80" stroke="rgba(240,237,232,0.06)" stroke-width="0.5"/>
+              <line x1="0" y1="50" x2="320" y2="50" stroke="rgba(240,237,232,0.06)" stroke-width="0.5"/>
+              <line x1="0" y1="20" x2="320" y2="20" stroke="rgba(240,237,232,0.06)" stroke-width="0.5"/>
+              <polyline
+                points="0,76 40,72 80,68 120,55 160,42 200,30 240,22 280,18 320,12"
+                fill="none" stroke="var(--chart-sacral)" stroke-width="1"/>
+              <circle cx="320" cy="12" r="2.5" fill="var(--chart-sacral)"/>
+            </svg>
+            <span class="chart-block-value">+312%</span>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 07 · chart</span>
+          <h3 class="stage-name">Sparkline<em>signal accent</em></h3>
+          <p class="stage-desc">A single 1px line in a chart-color. The only color in the system, used as scientific data — never decoration.</p>
+          <div class="stage-meta"><span>SVG · responsive</span><span>1px line</span></div>
+        </div>
+      </div>
+
+      <div class="stage" style="margin-top: 1px;">
+        <div class="stage-canvas" style="display: block; padding: 0;">
+          <div style="padding: var(--sp-3) var(--sp-5);">
+            <div class="data-row">
+              <span class="data-num">01</span>
+              <span class="data-title">Sacral Center</span>
+              <span class="data-meta">Gate 34 · 57</span>
+            </div>
+            <div class="data-row">
+              <span class="data-num">02</span>
+              <span class="data-title">Ajna Center</span>
+              <span class="data-meta">Gate 47 · 11</span>
+            </div>
+            <div class="data-row">
+              <span class="data-num">03</span>
+              <span class="data-title">Throat Center</span>
+              <span class="data-meta">Gate 23 · 56</span>
+            </div>
+            <div class="data-row">
+              <span class="data-num">04</span>
+              <span class="data-title">Spleen Center</span>
+              <span class="data-meta">Gate 44 · 28</span>
+            </div>
+          </div>
+        </div>
+        <div class="stage-divider"></div>
+        <div class="stage-info">
+          <span class="stage-tag">— stage 07 · grid</span>
+          <h3 class="stage-name">DataGrid<em>information rows</em></h3>
+          <p class="stage-desc">A list pattern with hairline dividers and a hover-fill that crawls left-to-right. No backgrounds, no zebra-striping.</p>
+          <div class="stage-meta"><span>hover: padding shift</span><span>hairlines</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOT ──────────────────────────────────── -->
+    <div class="lib-foot">
+      <a href="synthesis.html" class="page-link" onclick="event.preventDefault(); P51.crossTo('synthesis.html')">
+        <span class="arrow">←</span> Back to Synthesis
+      </a>
+      <a href="work.html" class="page-link" onclick="event.preventDefault(); P51.crossTo('work.html')">
+        Continue to Atelier <span class="arrow">→</span>
+      </a>
+    </div>
+
+  </main>
+
+  <script src="p51.js"></script>
+  <script>
+    /* ── enter ── */
+    requestAnimationFrame(() => document.body.classList.remove('entering'));
+
+    /* ── primitives ── */
+    P51.initCursor();
+    P51.compass({ label: 'library' });
+    P51.versionStamp({ text: 'v.1 · 0' });
+    P51.trackVisit();
+
+    /* ── geometry mounts ── */
+    document.getElementById('geoMark1').appendChild(P51.mark({ size: 88, animate: 'breathe', strokeWidth: 1.5 }));
+    document.getElementById('geoMark2').appendChild(P51.mark({ size: 88, animate: 'static', strokeWidth: 1.5 }));
+    document.getElementById('geoMark3').appendChild(P51.mark({ size: 32, animate: 'static', strokeWidth: 3 }));
+
+    /* ── reveal on scroll ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+  <!-- GSAP for the improved A2.1+ converge animation -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof gsap === 'undefined') return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) return;
+
+      const svg = document.getElementById('anim-converge-gsap');
+      if (!svg) return;
+      const sqA  = svg.querySelector('.sq-a');
+      const sqB  = svg.querySelector('.sq-b');
+      const core = svg.querySelector('.core');
+
+      // Each element transforms around its own bounding-box center.
+      gsap.set([sqA, sqB, core], { transformOrigin: '50% 50%', transformBox: 'fill-box' });
+
+      /* ── A2.1+ choreography ──────────────────────────────────
+         beat 1 · ANTICIPATE  squares far apart, faded, slight skew (0   – 0.10)
+         beat 2 · APPROACH    converge with overshoot via expo.out (0.10 – 0.95)
+         beat 3 · ARRIVE      core springs into place (0.85 – 1.30)
+         beat 4 · BREATH      whole mark pulses subtly (1.30 – 2.50)
+         beat 5 · DEPART      smooth retreat back to start (2.50 – 3.20)
+         repeats with a 0.6s rest
+      ────────────────────────────────────────────────────────── */
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
+
+      // beat 1 · anticipation — set start state
+      tl.set(sqA,  { x: -22, y: -22, opacity: 0, rotation: -3 })
+        .set(sqB,  { x:  22, y:  22, opacity: 0, rotation:  3 })
+        .set(core, { scale: 0,        opacity: 0 });
+
+      // beat 2 · APPROACH — squares fade in and slide together with decisive arrival
+      tl.to(sqA, {
+          x: 0, y: 0, opacity: 0.45, rotation: 0,
+          duration: 0.85, ease: 'expo.out'
+        }, 0.10)
+        .to(sqB, {
+          x: 0, y: 0, opacity: 0.45, rotation: 0,
+          duration: 0.85, ease: 'expo.out'
+        }, 0.18);  // 80ms stagger — A leads, B follows
+
+      // beat 3 · ARRIVE — core crystallises with a small spring
+      tl.to(core, {
+          scale: 1, opacity: 1,
+          duration: 0.55, ease: 'back.out(1.7)'
+        }, 0.85);
+
+      // beat 4 · BREATH — gentle hold pulse on the whole mark
+      tl.to(svg, {
+          scale: 1.04,
+          duration: 0.6, ease: 'sine.inOut',
+          transformOrigin: '50% 50%'
+        }, 1.40)
+        .to(svg, {
+          scale: 1,
+          duration: 0.6, ease: 'sine.inOut'
+        }, 2.00);
+
+      // beat 5 · DEPART — graceful retreat to start
+      tl.to([sqA, sqB], {
+          opacity: 0,
+          duration: 0.45, ease: 'power2.in'
+        }, 2.55)
+        .to(sqA, { x: -22, y: -22, rotation: -3, duration: 0.45, ease: 'power2.in' }, 2.55)
+        .to(sqB, { x:  22, y:  22, rotation:  3, duration: 0.45, ease: 'power2.in' }, 2.55)
+        .to(core, {
+          scale: 0, opacity: 0,
+          duration: 0.4, ease: 'power3.in'
+        }, 2.50);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hero · Variation A — Editorial Cover</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+    /* ── Variation A: Editorial Cover ────────────────────────────
+       Concept: magazine-cover aesthetic. The headline IS the page.
+       Tiny mark inline with eyebrow at top.
+       Huge two-line headline dominates.
+       Hairline + "credits" line below + body paragraph.
+    ──────────────────────────────────────────────────────────── */
+
+    body { line-height: 1.5; }
+
+    .va-hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(40px, 7vw, 96px) clamp(28px, 6vw, 80px);
+      gap: clamp(40px, 6vw, 80px);
+    }
+
+    /* top: tiny mark + eyebrow */
+    .va-top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .va-mark {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+    }
+    .va-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+    }
+    .va-eyebrow::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--chart-sacral);
+    }
+    .va-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--chart-sacral);
+      box-shadow: 0 0 12px rgba(200,255,0,0.5);
+      animation: vaPulse 2.4s var(--ease-inout) infinite;
+    }
+    @keyframes vaPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)} }
+
+    /* the editorial headline — huge, dominates */
+    .va-headline {
+      font-family: var(--font-display);
+      font-weight: 100;
+      font-size: clamp(64px, 13vw, 220px);
+      line-height: 0.9;
+      letter-spacing: -0.045em;
+      margin: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .va-headline span { display: block; }
+    .va-headline .va-line-2 {
+      color: var(--p51-t-50);
+      padding-left: clamp(40px, 6vw, 120px);
+    }
+
+    /* bottom: hairline · credits · body */
+    .va-foot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 80px);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-credits {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .va-credits-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+    }
+    .va-credits-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--p51-white);
+      letter-spacing: 0.04em;
+    }
+    .va-credits-line .accent { color: var(--chart-sacral); }
+    .va-body {
+      font-size: clamp(14px, 1.3vw, 16px);
+      line-height: 1.7;
+      color: var(--p51-t-70);
+      max-width: 56ch;
+    }
+
+    @media (max-width: 760px) {
+      .va-foot { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .va-headline .va-line-2 { padding-left: 0; }
+    }
+
+    /* footer: which variation */
+    .va-stamp {
+      position: fixed;
+      bottom: 18px; left: 18px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      z-index: 50;
+    }
+    .va-stamp a { color: var(--p51-t-50); }
+    .va-stamp a:hover { color: var(--p51-white); }
+  </style>
+</head>
+<body>
+
+  <section class="va-hero">
+
+    <div class="va-top">
+      <svg class="va-mark" viewBox="0 0 110 110" aria-hidden="true">
+        <rect x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2.5" opacity="0.45"/>
+        <rect x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2.5" opacity="0.45"/>
+        <rect x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+      </svg>
+      <span class="va-eyebrow">A boutique agency · est. 2026 <span class="dot"></span></span>
+    </div>
+
+    <h1 class="va-headline">
+      <span>Two disciplines.</span>
+      <span class="va-line-2">One precise output.</span>
+    </h1>
+
+    <div class="va-foot">
+      <div class="va-credits">
+        <span class="va-credits-label">Credits</span>
+        <span class="va-credits-line">
+          Design + Automation · Two founders · Boutique · selective · ratio <span class="accent">0.625</span>
+        </span>
+      </div>
+      <p class="va-body">
+        Project 51 is the synthesis of two complete disciplines — visual craft and system engineering. The work we ship looks designed. It also runs. Both halves are non-negotiable.
+      </p>
+    </div>
+
+  </section>
+
+  <span class="va-stamp">Variation A · Editorial Cover &nbsp; · &nbsp; <a href="hero-a2">A2 →</a> &nbsp; <a href="hero-a3">A3 →</a> &nbsp; <a href="hero-b">B</a></span>
+
+</body>
+</html>

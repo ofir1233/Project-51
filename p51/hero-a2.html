@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hero · Variation A2 — Indexed Edition</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+    /* ── Variation A2: Indexed Edition (expanded) ─────────────────
+       Editorial Cover with a print-journal frame. Adds:
+         · Vertical spine label on the left edge
+         · Large folio "01" watermark (top right)
+         · Edition stamp with serial / filed-on date
+         · "Filed under" line in credits
+         · In-this-issue chapter index strip
+         · Continue-to-next hint at the very bottom
+    ──────────────────────────────────────────────────────────── */
+
+    body { line-height: 1.5; }
+
+    .va-hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      padding: clamp(40px, 6.5vw, 88px) clamp(56px, 7vw, 120px);
+      gap: clamp(36px, 5vw, 72px);
+      position: relative;
+    }
+
+    /* ── vertical spine label (left edge) ── */
+    .va-spine {
+      position: fixed;
+      top: 50%;
+      left: 24px;
+      transform: rotate(-90deg) translateX(50%);
+      transform-origin: left center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .va-spine::before {
+      content: '';
+      display: inline-block;
+      width: 22px; height: 1px;
+      background: var(--p51-t-30);
+      vertical-align: middle;
+      margin-right: 12px;
+    }
+
+    /* ── TOP: mark + eyebrow LEFT, edition RIGHT ── */
+    .va-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .va-top-l {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .va-mark {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+    }
+    .va-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+    }
+    .va-eyebrow::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--chart-sacral);
+    }
+    .va-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--chart-sacral);
+      box-shadow: 0 0 12px rgba(200,255,0,0.5);
+      animation: vaPulse 2.4s var(--ease-inout) infinite;
+    }
+    @keyframes vaPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)} }
+
+    /* edition stamp — top right */
+    .va-edition {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      text-align: right;
+      position: relative;
+      z-index: 2;
+    }
+    .va-edition strong {
+      font-weight: 400;
+      color: var(--p51-white);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+    }
+    .va-edition-serial {
+      color: var(--p51-t-50);
+      letter-spacing: 0.18em;
+      font-size: 10px;
+    }
+    .va-edition-filed {
+      color: var(--p51-t-30);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--p51-border);
+      width: 100%;
+      text-align: right;
+    }
+
+    /* the editorial headline — split by a running rule */
+    .va-headline {
+      position: relative;
+      z-index: 2;
+      font-family: var(--font-display);
+      font-weight: 100;
+      font-size: clamp(64px, 13vw, 220px);
+      line-height: 0.9;
+      letter-spacing: -0.045em;
+      margin: 0;
+      align-self: center;
+    }
+    .va-headline span { display: block; }
+    .va-headline .va-line-1 {}
+    .va-headline .va-line-2 {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--p51-t-70);
+      padding-left: clamp(40px, 6vw, 120px);
+      margin-top: var(--sp-2);
+      letter-spacing: -0.025em;
+    }
+    /* ── FOOT: credits + body ── */
+    .va-foot {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 80px);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-credits {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .va-credits-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+    }
+    .va-credits-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--p51-white);
+      letter-spacing: 0.04em;
+    }
+    .va-credits-line .accent { color: var(--chart-sacral); }
+    .va-credits-filed {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: var(--sp-3);
+      margin-top: var(--sp-1);
+      border-top: 1px dashed var(--p51-border);
+    }
+    .va-credits-filed-line {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--p51-t-50);
+      letter-spacing: 0.06em;
+    }
+    .va-body {
+      font-size: clamp(14px, 1.3vw, 16px);
+      line-height: 1.7;
+      color: var(--p51-t-70);
+      max-width: 56ch;
+    }
+
+    /* ── IN THIS ISSUE — chapter index strip ── */
+    .va-issue {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: clamp(20px, 3vw, 48px);
+      align-items: center;
+      padding: var(--sp-4) 0 var(--sp-2);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-issue-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .va-issue-label::before {
+      content: '';
+      width: 18px; height: 1px;
+      background: var(--p51-t-30);
+    }
+    .va-issue-list {
+      display: flex;
+      gap: clamp(16px, 2.5vw, 36px);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .va-issue-item {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color var(--dur-fast);
+    }
+    .va-issue-item:hover { color: var(--p51-white); }
+    .va-issue-item .num {
+      color: var(--p51-t-30);
+      font-variant-numeric: tabular-nums;
+    }
+    .va-issue-item.is-current .num { color: var(--chart-sacral); }
+    .va-issue-item.is-current { color: var(--p51-white); }
+    .va-issue-continue {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color var(--dur-fast), gap var(--dur-mid) var(--ease-spring);
+      white-space: nowrap;
+    }
+    .va-issue-continue:hover { color: var(--p51-white); gap: 14px; }
+
+    @media (max-width: 880px) {
+      .va-spine { display: none; }
+    }
+    @media (max-width: 760px) {
+      .va-hero { padding: clamp(32px, 6vw, 64px) clamp(24px, 5vw, 56px); }
+      .va-foot { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .va-headline .va-line-2 { padding-left: 0; }
+      .va-issue {
+        grid-template-columns: 1fr;
+        gap: var(--sp-3);
+      }
+      .va-issue-list { justify-content: flex-start; }
+    }
+
+    .va-stamp {
+      position: fixed;
+      bottom: 18px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      z-index: 50;
+      white-space: nowrap;
+    }
+    .va-stamp a { color: var(--p51-t-50); }
+    .va-stamp a:hover { color: var(--p51-white); }
+  </style>
+</head>
+<body>
+
+  <span class="va-spine">P51 · synthesis · worldview · 01</span>
+
+  <section class="va-hero">
+
+    <div class="va-top">
+      <div class="va-top-l">
+        <svg class="va-mark" viewBox="0 0 110 110" aria-hidden="true">
+          <rect x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2.5" opacity="0.45"/>
+          <rect x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2.5" opacity="0.45"/>
+          <rect x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+        </svg>
+        <span class="va-eyebrow">A boutique agency · est. 2026 <span class="dot"></span></span>
+      </div>
+      <div class="va-edition">
+        <span>Edition</span>
+        <strong>№ 01 · 2026</strong>
+        <span class="va-edition-serial">ISSN 0625-2026</span>
+        <span class="va-edition-filed">Filed 28.04.2026</span>
+      </div>
+    </div>
+
+    <h1 class="va-headline">
+      <span class="va-line-1">Two disciplines.</span>
+      <span class="va-line-2">One precise output.</span>
+    </h1>
+
+    <div class="va-foot">
+      <div class="va-credits">
+        <span class="va-credits-label">Credits</span>
+        <span class="va-credits-line">
+          Design + Automation · Two founders · Boutique · selective · ratio <span class="accent">0.625</span>
+        </span>
+        <span class="va-credits-filed">
+          <span class="va-credits-filed-line">Filed under <em style="font-style:italic; color: var(--p51-white);">— synthesis, geometry, system</em></span>
+          <span class="va-credits-filed-line">Authored by Ofir / Partner · published Q2 2026</span>
+        </span>
+      </div>
+      <p class="va-body">
+        Project 51 is the synthesis of two complete disciplines — visual craft and system engineering. The work we ship looks designed. It also runs. Both halves are non-negotiable.
+      </p>
+    </div>
+
+    <div class="va-issue">
+      <span class="va-issue-label">In this issue</span>
+      <div class="va-issue-list">
+        <a class="va-issue-item is-current" href="#01"><span class="num">01</span> Worldview</a>
+        <a class="va-issue-item" href="#02"><span class="num">02</span> Diagnosis</a>
+        <a class="va-issue-item" href="#03"><span class="num">03</span> Discipline</a>
+        <a class="va-issue-item" href="#04"><span class="num">04</span> Geometry</a>
+        <a class="va-issue-item" href="#05"><span class="num">05</span> Method</a>
+        <a class="va-issue-item" href="#06"><span class="num">06</span> Atelier</a>
+        <a class="va-issue-item" href="#07"><span class="num">07</span> Library</a>
+        <a class="va-issue-item" href="#08"><span class="num">08</span> Invitation</a>
+      </div>
+      <a class="va-issue-continue" href="#02">↓ Continue to 02</a>
+    </div>
+
+  </section>
+
+  <span class="va-stamp"><a href="hero-a">← A</a> &nbsp; · &nbsp; Variation A2 · Indexed Edition &nbsp; · &nbsp; <a href="hero-a3">A3 →</a></span>
+
+</body>
+</html>

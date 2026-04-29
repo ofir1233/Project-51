@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- ── primary meta ── -->
+  <title>Project 51 — Two disciplines. One precise output.</title>
+  <meta name="description" content="Project 51 is a boutique agency synthesising visual craft and system engineering. Design that ships and runs — one team, both halves."/>
+  <meta name="author" content="Project 51"/>
+  <meta name="theme-color" content="#060606"/>
+  <link rel="canonical" href="https://nona-portfolio-eight.vercel.app/p51/synthesis"/>
+
+  <!-- ── icons ── -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="apple-touch-icon" href="/favicon.svg"/>
+
+  <!-- ── Open Graph ── -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Project 51"/>
+  <meta property="og:title" content="Project 51 — Two disciplines. One precise output."/>
+  <meta property="og:description" content="A boutique agency synthesising visual craft and system engineering. Design that ships and runs."/>
+  <meta property="og:url" content="https://nona-portfolio-eight.vercel.app/p51/synthesis"/>
+  <meta property="og:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale" content="en_US"/>
+
+  <!-- ── Twitter ── -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Project 51 — Two disciplines. One precise output."/>
+  <meta name="twitter:description" content="A boutique agency synthesising visual craft and system engineering."/>
+  <meta name="twitter:image" content="https://nona-portfolio-eight.vercel.app/og.svg"/>
+
+  <!-- ── performance ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+
+  <!-- ── structured data ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://nona-portfolio-eight.vercel.app/#org",
+        "name": "Project 51",
+        "url": "https://nona-portfolio-eight.vercel.app/",
+        "logo": "https://nona-portfolio-eight.vercel.app/favicon.svg",
+        "description": "A boutique agency synthesising visual craft and system engineering.",
+        "foundingDate": "2026",
+        "email": "ofir@hear.ai"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://nona-portfolio-eight.vercel.app/#site",
+        "url": "https://nona-portfolio-eight.vercel.app/",
+        "name": "Project 51",
+        "publisher": { "@id": "https://nona-portfolio-eight.vercel.app/#org" },
+        "inLanguage": "en"
+      },
+      {
+        "@type": "WebPage",
+        "url": "https://nona-portfolio-eight.vercel.app/p51/synthesis",
+        "name": "Project 51 — The Synthesis",
+        "isPartOf": { "@id": "https://nona-portfolio-eight.vercel.app/#site" },
+        "primaryImageOfPage": "https://nona-portfolio-eight.vercel.app/og.svg"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="tokens.css"/>
+
+  <!-- GSAP + ScrollTrigger for the breathing-text motion system -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <!-- Three.js for the discipline-portrait point cloud -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js" defer></script>
+
+  <noscript>
+    <style>
+      .reveal, .reveal-stagger > *,
+      .va-spine, .va-top-l > *, .va-edition > *,
+      .va-headline > span, .va-foot > *, .va-issue > * {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
+
+  <style>
+
+    /* ═══════════════════════════════════════════════════════════
+       SYNTHESIS · the core flowing experience
+       The worldview, made walkable.
+    ═══════════════════════════════════════════════════════════ */
+
+    body { line-height: 1.5; }
+    /* hide page content while booting — but keep the boot loader itself visible */
+    body.entering > *:not(.boot) {
+      opacity: 0;
+    }
+    body > *:not(.boot) {
+      transition: opacity 800ms ease;
+    }
+
+    main { padding-top: var(--sp-7); }
+
+    /* ── boot loader · two squares aligning ── */
+    .boot {
+      position: fixed;
+      inset: 0;
+      background: var(--p51-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 22px;
+      z-index: 9999;
+      transition: opacity 600ms var(--ease-expo);
+    }
+    .boot.done { opacity: 0; pointer-events: none; }
+    .boot-svg { display: block; }
+    .boot-sq-a {
+      transform: translate(-14px, -14px);
+      animation: bootConvergeA 1400ms var(--ease-expo) forwards;
+      transform-origin: 40px 40px;
+    }
+    .boot-sq-b {
+      transform: translate(14px, 14px);
+      animation: bootConvergeB 1400ms var(--ease-expo) forwards;
+      transform-origin: 70px 70px;
+    }
+    .boot-core {
+      opacity: 0;
+      animation: bootCore 700ms var(--ease-expo) 1050ms forwards;
+    }
+    @keyframes bootConvergeA { to { transform: translate(0,0); } }
+    @keyframes bootConvergeB { to { transform: translate(0,0); } }
+    @keyframes bootCore      { to { opacity: 0.92; } }
+    .boot-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: bootLabel 600ms var(--ease-expo) 200ms forwards;
+    }
+    @keyframes bootLabel { to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .boot-sq-a, .boot-sq-b { animation: none; transform: translate(0,0); }
+      .boot-core   { animation: none; opacity: 0.92; }
+      .boot-label  { animation: none; opacity: 1; }
+    }
+
+    /* ── chapter scaffolding ── */
+    .chapter {
+      position: relative;
+      padding: var(--sp-20) clamp(24px, 6vw, 80px);
+      border-bottom: 1px solid var(--p51-border);
+    }
+    .chapter:last-child { border-bottom: none; }
+
+    .chapter-num {
+      position: absolute;
+      top: var(--sp-6);
+      right: clamp(24px, 6vw, 80px);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-15);
+      text-transform: uppercase;
+    }
+
+    /* corner crop marks per chapter */
+    .chapter::before {
+      content: '';
+      position: absolute;
+      top: var(--sp-4);
+      left: clamp(24px, 6vw, 80px);
+      width: 10px; height: 10px;
+      border-top: 1px solid var(--p51-t-30);
+      border-left: 1px solid var(--p51-t-30);
+    }
+
+    /* ── reveal initial states (GSAP ScrollTrigger drives the animation) ── */
+    .reveal,
+    .reveal-stagger > * {
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    /* hero-cover initial states — GSAP timeline handles entrance after boot */
+    .va-spine,
+    .va-top-l > *,
+    .va-edition > *,
+    .va-foot > *,
+    .va-issue > * {
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    .va-headline > span {
+      display: block;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* ── chapter 01 · OPENING WORLDVIEW · editorial cover ── */
+    .opening {
+      padding: clamp(40px, 6.5vw, 88px) clamp(56px, 7vw, 120px);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      gap: clamp(36px, 5vw, 72px);
+      position: relative;
+      overflow: hidden;
+    }
+    /* hide the default chapter framing — this hero brings its own */
+    .opening::before { display: none; }
+    .opening > .chapter-num { display: none; }
+
+    /* hover-revealed grid — radial mask follows the cursor.
+       Top of section to top of .va-foot (height set via JS) so the grid
+       never bleeds under the credits / body region. */
+    .va-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;             /* JS overrides this on load + resize */
+      pointer-events: none;
+      z-index: 0;
+      --gx: 50%;
+      --gy: 50%;
+      background-image:
+        linear-gradient(rgba(240,237,232,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,237,232,0.18) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(circle 360px at var(--gx) var(--gy), #000 0%, transparent 100%);
+              mask-image: radial-gradient(circle 360px at var(--gx) var(--gy), #000 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.30s var(--ease-expo);
+    }
+    .opening:hover .va-grid { opacity: 1; }
+    /* va-grid is the first child of .opening so it naturally paints below
+       siblings — no extra z-index hacks needed (which would break .va-spine's
+       position: absolute placement). */
+
+    /* vertical spine label — left edge of the hero */
+    .va-spine {
+      position: absolute;
+      top: 50%;
+      left: 24px;
+      transform: rotate(-90deg) translateX(50%);
+      transform-origin: left center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .va-spine::before {
+      content: '';
+      display: inline-block;
+      width: 22px; height: 1px;
+      background: var(--p51-t-30);
+      vertical-align: middle;
+      margin-right: 12px;
+    }
+
+    /* TOP: mark + eyebrow LEFT, edition stamp RIGHT */
+    .va-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .va-top-l {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    /* hero logo lockup — mark + hairline + wordmark */
+    .va-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .va-mark {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+      display: block;
+    }
+    .va-mark .sq,
+    .va-mark .core {
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    .va-mark-rule {
+      width: 1px;
+      height: 22px;
+      background: var(--p51-border-hi);
+      flex-shrink: 0;
+    }
+    .va-wordmark {
+      font-family: var(--font-mono);
+      font-weight: 400;
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      color: var(--p51-white);
+      text-transform: uppercase;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .va-wordmark .thin {
+      color: var(--p51-t-30);
+      margin: 0 6px;
+    }
+    .va-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+    }
+    .va-eyebrow::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--chart-sacral);
+    }
+    .va-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--chart-sacral);
+      box-shadow: 0 0 12px rgba(200,255,0,0.5);
+      animation: vaPulse 2.4s var(--ease-inout) infinite;
+    }
+    @keyframes vaPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)} }
+
+    .va-edition {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      text-align: right;
+    }
+    .va-edition strong {
+      font-weight: 400;
+      color: var(--p51-white);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+    }
+    .va-edition-serial {
+      color: var(--p51-t-50);
+      letter-spacing: 0.18em;
+      font-size: 10px;
+    }
+    .va-edition-filed {
+      color: var(--p51-t-30);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--p51-border);
+      width: 100%;
+      text-align: right;
+    }
+
+    /* the editorial headline */
+    .va-headline {
+      font-family: var(--font-display);
+      font-weight: 100;
+      font-size: clamp(64px, 13vw, 220px);
+      line-height: 0.9;
+      letter-spacing: -0.045em;
+      margin: 0;
+      align-self: center;
+    }
+    .va-headline span { display: block; }
+    .va-headline .va-line-2 {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--p51-t-70);
+      padding-left: clamp(40px, 6vw, 120px);
+      margin-top: var(--sp-2);
+      letter-spacing: -0.025em;
+    }
+
+    /* FOOT: credits + body */
+    .va-foot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 80px);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-credits {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .va-credits-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+    }
+    .va-credits-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--p51-white);
+      letter-spacing: 0.04em;
+    }
+    .va-credits-line .accent { color: var(--chart-sacral); }
+    .va-credits-filed {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: var(--sp-3);
+      margin-top: var(--sp-1);
+      border-top: 1px dashed var(--p51-border);
+    }
+    .va-credits-filed-line {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--p51-t-50);
+      letter-spacing: 0.06em;
+    }
+    .va-credits-filed-line em {
+      font-style: italic;
+      color: var(--p51-white);
+    }
+    .va-body {
+      font-size: clamp(14px, 1.3vw, 16px);
+      line-height: 1.7;
+      color: var(--p51-t-70);
+      max-width: 56ch;
+    }
+
+    /* IN THIS ISSUE strip */
+    .va-issue {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: clamp(20px, 3vw, 48px);
+      align-items: center;
+      padding: var(--sp-4) 0 var(--sp-2);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-issue-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .va-issue-label::before {
+      content: '';
+      width: 18px; height: 1px;
+      background: var(--p51-t-30);
+    }
+    .va-issue-list {
+      display: flex;
+      gap: clamp(16px, 2.5vw, 36px);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .va-issue-item {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color var(--dur-fast);
+    }
+    .va-issue-item:hover { color: var(--p51-white); }
+    .va-issue-item .num {
+      color: var(--p51-t-30);
+      font-variant-numeric: tabular-nums;
+    }
+    .va-issue-item.is-current .num { color: var(--chart-sacral); }
+    .va-issue-item.is-current { color: var(--p51-white); }
+    .va-issue-continue {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color var(--dur-fast), gap var(--dur-mid) var(--ease-spring);
+      white-space: nowrap;
+    }
+    .va-issue-continue:hover { color: var(--p51-white); gap: 14px; }
+
+    @media (max-width: 880px) {
+      .va-spine { display: none; }
+    }
+    @media (max-width: 760px) {
+      .opening {
+        padding: clamp(28px, 6vw, 56px) clamp(20px, 5vw, 40px);
+        gap: clamp(28px, 5vw, 56px);
+      }
+      .va-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--sp-4);
+      }
+      .va-edition {
+        align-items: flex-start;
+        text-align: left;
+      }
+      .va-edition-filed {
+        text-align: left;
+      }
+      .va-headline {
+        /* tighter min-size + line-height for small screens */
+        font-size: clamp(40px, 11vw, 72px);
+        line-height: 0.94;
+      }
+      .va-headline .va-line-2 { padding-left: 0; margin-top: var(--sp-1); }
+      .va-foot { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .va-body { max-width: none; }
+      .va-issue { grid-template-columns: 1fr; gap: var(--sp-3); }
+      .va-issue-label::before { width: 12px; }
+      .va-issue-list { justify-content: flex-start; gap: var(--sp-3); }
+      .va-issue-continue { font-size: 9px; }
+    }
+    @media (max-width: 480px) {
+      .va-headline { font-size: clamp(34px, 10vw, 56px); }
+      .va-edition-serial,
+      .va-edition-filed { display: none; }   /* keep only Edition + № on tight screens */
+      .va-credits-filed { display: none; }    /* drop the "filed under" subblock */
+      .va-issue-list { gap: var(--sp-2); }
+    }
+
+    /* ── chapter 02 · THE DIAGNOSIS · the gap, made physical ── */
+    .diagnosis {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--sp-10);
+    }
+    .diagnosis-head {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .diagnosis-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 7vw, 96px);
+      font-weight: 100;
+      line-height: 0.96;
+      letter-spacing: -0.035em;
+      max-width: 16ch;
+    }
+    .diagnosis-title em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-70);
+    }
+
+    /* ── the gap stage — the showpiece ── */
+    .gap-stage {
+      position: relative;
+      padding: var(--sp-10) 0;
+      border-top: 1px solid var(--p51-border);
+      border-bottom: 1px solid var(--p51-border);
+    }
+    .gap-stage::before, .gap-stage::after {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      border-color: var(--p51-t-30);
+    }
+    .gap-stage::before {
+      top: -1px; left: -1px;
+      border-top: 1px solid;
+      border-left: 1px solid;
+    }
+    .gap-stage::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1px solid;
+      border-right: 1px solid;
+    }
+
+    .gap-words {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-5);
+      font-family: var(--font-display);
+      font-weight: 100;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      font-size: clamp(48px, 7.5vw, 96px);
+    }
+    .gap-word {
+      flex-shrink: 0;
+      transition: opacity 1200ms var(--ease-expo),
+                  transform 1400ms var(--ease-expo),
+                  letter-spacing 1400ms var(--ease-expo);
+      cursor: none;
+    }
+    .gap-word .ant {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      margin-top: var(--sp-2);
+    }
+
+    /* before reveal — words pressed together */
+    .gap-stage:not(.in) .gap-word.vision { opacity: 0; transform: translateX(60px); }
+    .gap-stage:not(.in) .gap-word.build  { opacity: 0; transform: translateX(-60px); }
+    .gap-stage.in .gap-word { opacity: 1; transform: translateX(0); }
+
+    /* the rail — the gap itself */
+    .gap-rail {
+      flex: 1;
+      height: 1px;
+      background: var(--p51-t-30);
+      position: relative;
+      margin: 0 var(--sp-2);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 1400ms var(--ease-expo) 200ms;
+    }
+    .gap-stage.in .gap-rail { transform: scaleX(1); }
+
+    .gap-rail::before {
+      content: 'THE GAP';
+      position: absolute;
+      left: 50%; top: -22px;
+      transform: translateX(-50%);
+      background: var(--p51-black);
+      padding: 0 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      color: var(--p51-t-50);
+      opacity: 0;
+      transition: opacity 600ms ease 1000ms;
+    }
+    .gap-stage.in .gap-rail::before { opacity: 1; }
+
+    /* annotations falling into the gap */
+    .gap-losses {
+      position: absolute;
+      top: calc(100% + var(--sp-3));
+      left: 0; right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .gap-loss {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-70);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 600ms var(--ease-expo),
+                  transform 700ms var(--ease-expo);
+    }
+    .gap-loss .minus {
+      display: inline-block;
+      width: 14px;
+      color: var(--p51-t-30);
+      margin-right: 8px;
+    }
+    .gap-stage.in .gap-loss { opacity: 1; transform: translateY(0); }
+    .gap-stage.in .gap-loss:nth-child(1) { transition-delay: 1200ms; }
+    .gap-stage.in .gap-loss:nth-child(2) { transition-delay: 1400ms; }
+    .gap-stage.in .gap-loss:nth-child(3) { transition-delay: 1600ms; }
+    .gap-stage.in .gap-loss:nth-child(4) { transition-delay: 1800ms; }
+
+    /* gap-stage labels above words */
+    .gap-side-labels {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: var(--sp-3);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .gap-side-labels .left,
+    .gap-side-labels .right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .gap-side-labels .left::after,
+    .gap-side-labels .right::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: currentColor;
+    }
+
+    /* gap meta — bottom strip after losses */
+    .gap-meta {
+      margin-top: var(--sp-12);
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--p51-border);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sp-4);
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .gap-meta-value { color: var(--p51-white); font-size: 12px; }
+
+    /* ── the verdict — what we do about it ── */
+    .diagnosis-verdict {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-8);
+      align-items: center;
+      padding-top: var(--sp-4);
+    }
+    .diagnosis-response {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 56px);
+      font-weight: 200;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+    .diagnosis-response em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-70);
+    }
+    .diagnosis-response-meta {
+      font-size: 14px;
+      color: var(--p51-t-50);
+      line-height: 1.7;
+      max-width: 380px;
+    }
+    .diagnosis-response-meta::before {
+      content: '— our response';
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      margin-bottom: var(--sp-2);
+    }
+
+    /* ── chapter 03 · THE DISCIPLINE ── */
+    .discipline-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+      gap: clamp(32px, 5vw, 80px);
+      align-items: stretch;
+    }
+    .discipline-portrait-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+      justify-content: flex-end;
+      cursor: none;
+      -webkit-mask-image:
+        linear-gradient(to right,  transparent 0%, #000 18%, #000 82%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+      -webkit-mask-composite: source-in;
+              mask-image:
+        linear-gradient(to right,  transparent 0%, #000 18%, #000 82%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+              mask-composite: intersect;
+    }
+    .discipline-portrait {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    /* point-cloud tunables — change these to retune the portrait live from DevTools */
+    :root {
+      --portrait-color:        #c8ff00;
+      --portrait-color-cold:   #b8b8b8;   /* idle state · visible cool tint applied to luminance */
+      --portrait-color-dark:   #0a0a0a;   /* darkest end of the hot ramp */
+      --portrait-density:      3;         /* px between samples — lower = more points */
+      --portrait-point-size:   1.7;
+      --portrait-depth:        0.45;      /* z-displacement from luminance · 0 = flat, 1+ = sculptural */
+      --portrait-noise:        0.028;     /* breathing amplitude */
+      --portrait-mouse-force:  0.22;      /* how hard the cursor pushes nearby points */
+      --portrait-parallax:     0.18;      /* how much the cloud rotates with the cursor */
+      --portrait-lum-cutoff:   0.08;      /* skip pixels darker than this (drops the black bg) */
+    }
+    @media (max-width: 900px) {
+      .discipline-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .discipline-statement {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 88px);
+      font-weight: 100;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      max-width: 16ch;
+    }
+    .discipline-statement em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--p51-t-50);
+    }
+    .discipline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--p51-border);
+      border: 1px solid var(--p51-border);
+      max-width: 720px;
+      margin-top: var(--sp-10);
+    }
+    .discipline-pane {
+      background: var(--p51-black);
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      min-height: 240px;
+      cursor: none;
+      transition: background 380ms var(--ease-expo),
+                  box-shadow 380ms var(--ease-expo);
+    }
+    .discipline-pane-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      transition: color 380ms var(--ease-expo);
+    }
+    .discipline-pane-name {
+      font-size: 22px;
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      transition: color 380ms var(--ease-expo);
+    }
+    .discipline-pane-name em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+      display: block;
+      transition: color 380ms var(--ease-expo);
+    }
+    .discipline-pane-list {
+      list-style: none;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .discipline-pane-list li {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.04em;
+      color: var(--p51-t-50);
+      padding-left: 14px;
+      position: relative;
+      transition: color 380ms var(--ease-expo);
+    }
+    .discipline-pane-list li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 7px;
+      width: 6px; height: 1px;
+      background: var(--p51-t-50);
+      transition: background 380ms var(--ease-expo);
+    }
+
+    /* hover · pane fills with brand green, type goes dark, soft outer glow */
+    .discipline-pane:hover {
+      background: var(--chart-sacral);
+      box-shadow:
+        0 0 0 1px rgba(200,255,0,0.55),
+        0 0 24px rgba(200,255,0,0.25),
+        0 0 60px rgba(200,255,0,0.15);
+    }
+    .discipline-pane:hover .discipline-pane-tag,
+    .discipline-pane:hover .discipline-pane-name,
+    .discipline-pane:hover .discipline-pane-list li {
+      color: var(--p51-black);
+    }
+    .discipline-pane:hover .discipline-pane-name em {
+      color: rgba(6,6,6,0.65);
+    }
+    .discipline-pane:hover .discipline-pane-list li::before {
+      background: var(--p51-black);
+    }
+
+    /* ── chapter 04 · GEOMETRY ── */
+    .geometry-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-10);
+      align-items: center;
+    }
+    .geometry-mark-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-12);
+      border: 1px solid var(--p51-border);
+      border-radius: 12px;
+      background: var(--p51-ink);
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .geometry-mark-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(240,237,232,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,237,232,0.025) 1px, transparent 1px);
+      background-size: 16px 16px;
+      pointer-events: none;
+    }
+    .geometry-mark-frame .p51-mark {
+      transition: transform var(--dur-slow) var(--ease-expo);
+    }
+    .geometry-mark-frame:hover .p51-mark { transform: scale(1.08); }
+    .geometry-mark-frame:hover .sq-a { transform: translate(-6px, -6px) !important; transition: transform var(--dur-slow) var(--ease-expo); }
+    .geometry-mark-frame:hover .sq-b { transform: translate(6px, 6px) !important; transition: transform var(--dur-slow) var(--ease-expo); }
+    .geometry-mark-frame:hover .core { transform: scale(1.05); transition: transform var(--dur-slow) var(--ease-expo); }
+    .geometry-mark-frame .core { transform-origin: center; }
+
+    .geometry-text { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .geometry-headline {
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 200;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+    .geometry-headline em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .geometry-spec {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px var(--sp-2);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      max-width: 320px;
+      padding-top: var(--sp-2);
+      border-top: 1px solid var(--p51-border);
+    }
+    .geometry-spec dt { color: var(--p51-t-50); letter-spacing: 0.06em; }
+    .geometry-spec dd { color: var(--p51-white); }
+
+    /* ── chapter 05 · METHOD ── */
+    .method-rail {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--sp-10);
+      align-items: start;
+    }
+    .method-headline {
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 200;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      max-width: 14ch;
+    }
+    .method-headline em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .method-headline + p {
+      font-size: 13px;
+      color: var(--p51-t-50);
+      line-height: 1.7;
+      margin-top: var(--sp-3);
+    }
+    .timeline-rail {
+      display: flex;
+      flex-direction: column;
+    }
+    .timeline-step {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: var(--sp-3);
+      align-items: baseline;
+      padding: var(--sp-4) 0;
+      border-bottom: 1px solid var(--p51-border);
+    }
+    .timeline-step:first-child { border-top: 1px solid var(--p51-border-hi); }
+    .timeline-step:last-child { border-bottom: 1px solid var(--p51-border-hi); }
+    .timeline-day {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .timeline-event { font-size: 18px; font-weight: 300; letter-spacing: -0.01em; }
+    .timeline-detail { font-size: 12px; color: var(--p51-t-50); display: block; margin-top: 4px; }
+    .timeline-marker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── chapter 06 · WORK PREVIEW ── */
+    .work-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--sp-6);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-8);
+    }
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--p51-border);
+      border: 1px solid var(--p51-border);
+    }
+    .work-card {
+      background: var(--p51-black);
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      min-height: 280px;
+      transition: background var(--dur-mid);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .work-card:hover { background: var(--p51-ink); }
+    .work-card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--p51-t-30);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .work-card-title {
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      margin-top: var(--sp-2);
+    }
+    .work-card-desc {
+      font-size: 13px;
+      color: var(--p51-t-50);
+      line-height: 1.7;
+      max-width: 380px;
+    }
+    .work-card-foot {
+      margin-top: auto;
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--p51-border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--p51-t-50);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .work-card .arrow {
+      transition: transform var(--dur-mid) var(--ease-spring);
+    }
+    .work-card:hover .arrow { transform: translateX(4px); }
+
+    /* ── chapter 07 · LIBRARY PREVIEW ── */
+    .library-stage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-8);
+      align-items: start;
+      margin-top: var(--sp-6);
+    }
+    .library-pitch {
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+    }
+    .library-headline {
+      font-size: clamp(28px, 3.5vw, 44px);
+      font-weight: 200;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+    .library-headline em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-50);
+    }
+    .library-pitch p {
+      font-size: 14px;
+      color: var(--p51-t-70);
+      line-height: 1.75;
+    }
+    .library-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--p51-border);
+      border: 1px solid var(--p51-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .library-mini-cell {
+      background: var(--p51-black);
+      padding: var(--sp-4);
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-2);
+      position: relative;
+    }
+    .library-mini-cell-label {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+    }
+    .mini-btn {
+      font-family: var(--font-display);
+      font-size: 11px;
+      padding: 8px 18px;
+      border-radius: 100px;
+      background: var(--p51-white);
+      color: var(--p51-black);
+      cursor: none;
+    }
+    .mini-input {
+      width: 80%;
+      padding: 6px 0;
+      border: none;
+      border-bottom: 1px solid var(--p51-border-hi);
+      background: transparent;
+      color: var(--p51-white);
+      font-size: 13px;
+      font-family: var(--font-display);
+      outline: none;
+    }
+    .mini-input::placeholder { color: var(--p51-t-30); }
+    .mini-mark { transform: scale(0.7); }
+
+    /* ── chapter 08 · INVITATION ── */
+    .invitation {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--sp-6);
+    }
+    .invitation-headline {
+      font-size: clamp(48px, 8vw, 116px);
+      font-weight: 100;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      max-width: 12ch;
+    }
+    .invitation-headline em {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--p51-t-70);
+    }
+    .invitation-sub {
+      font-size: 16px;
+      color: var(--p51-t-70);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+    .invitation-actions {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+      margin-top: var(--sp-4);
+    }
+    .btn {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      padding: 14px 28px;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      cursor: none;
+      transition: all var(--dur-fast) var(--ease-expo);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--p51-white); color: var(--p51-black); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost { color: var(--p51-t-70); border-color: var(--p51-border-hi); }
+    .btn-ghost:hover { color: var(--p51-white); border-color: var(--p51-white); }
+    .btn .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .btn:hover .arrow { transform: translateX(4px); }
+
+    /* generic page link primitive */
+    .page-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--p51-t-70);
+      text-transform: uppercase;
+      padding: var(--sp-2) 0;
+      border-top: 1px solid var(--p51-border);
+      border-bottom: 1px solid var(--p51-border);
+      transition: color var(--dur-fast), letter-spacing var(--dur-mid);
+      cursor: none;
+    }
+    .page-link:hover {
+      color: var(--p51-white);
+      letter-spacing: 0.18em;
+    }
+    .page-link .arrow { transition: transform var(--dur-mid) var(--ease-spring); }
+    .page-link:hover .arrow { transform: translateX(8px); }
+
+    /* ── responsive ── */
+    @media (max-width: 880px) {
+      .chapter { padding: var(--sp-12) var(--sp-3); }
+      .geometry-stage,
+      .method-rail,
+      .library-stage { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .work-grid { grid-template-columns: 1fr; }
+      .discipline-grid { grid-template-columns: 1fr; }
+      .diagnosis-verdict { grid-template-columns: 1fr; gap: var(--sp-4); }
+    }
+    @media (max-width: 760px) {
+      /* ── chapter 02 · mobile composition · clean vertical stack ── */
+      .diagnosis {
+        min-height: auto;
+        justify-content: flex-start;
+        padding: var(--sp-12) var(--sp-3);
+        gap: var(--sp-7);
+      }
+      .gap-stage {
+        max-width: none;
+        padding: var(--sp-6) 0;
+      }
+
+      /* desktop side labels are absolute — hide; we re-inject inline below */
+      .gap-side-labels { display: none; }
+
+      .gap-words {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        font-size: clamp(48px, 14vw, 80px);
+      }
+
+      /* inline mono labels for vision / build */
+      .gap-word.vision::before {
+        content: '01 / WHAT YOU IMAGINE';
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--p51-t-30);
+        line-height: 1;
+        margin-bottom: var(--sp-2);
+      }
+      .gap-word.build::after {
+        content: 'WHAT SHIPS / 02';
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 400;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--p51-t-30);
+        line-height: 1;
+        margin-top: var(--sp-2);
+      }
+
+      /* the rail becomes a full-width container with a 1px line at its top.
+         Children flow naturally below the line — no absolute positioning. */
+      .gap-rail {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        margin: var(--sp-5) 0;
+        align-self: stretch;
+        background: linear-gradient(var(--p51-t-30), var(--p51-t-30)) top left / 0% 1px no-repeat;
+        background-color: transparent;
+        transition: background-size 1400ms var(--ease-expo) 200ms;
+        padding-top: var(--sp-4);
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--sp-3);
+      }
+      .gap-stage.in .gap-rail {
+        background-size: 100% 1px;
+        transform: none;
+      }
+
+      .gap-rail::before {
+        content: 'THE GAP';
+        position: static;
+        transform: none;
+        background: transparent;
+        padding: 0;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.32em;
+        color: var(--p51-t-50);
+        opacity: 0;
+        transition: opacity 600ms ease 800ms;
+        margin: 0;
+      }
+      .gap-stage.in .gap-rail::before { opacity: 1; }
+
+      /* losses flow naturally inside the rail container, left-aligned list */
+      .gap-losses {
+        position: static;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+      }
+      .gap-loss {
+        font-size: 12px;
+        text-align: left;
+      }
+      .gap-loss .minus {
+        width: 14px;
+        margin-right: 8px;
+      }
+
+      .gap-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding-top: var(--sp-4);
+        margin-top: var(--sp-6);
+      }
+    }
+  </style>
+</head>
+<body class="entering">
+
+  <!-- boot loader -->
+  <div class="boot" id="bootLoader" aria-hidden="true">
+    <svg class="boot-svg" width="64" height="64" viewBox="0 0 110 110">
+      <rect class="boot-sq-a" x="0"  y="0"  width="80" height="80"
+            fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.4"/>
+      <rect class="boot-sq-b" x="30" y="30" width="80" height="80"
+            fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.4"/>
+      <rect class="boot-core" x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+    </svg>
+    <span class="boot-label">aligning · 0.625</span>
+  </div>
+
+  <!-- meta strip -->
+  <div class="meta-strip">
+    <span>P51 / SYNTHESIS</span>
+    <div class="meta-strip-links">
+      <a href="../p51-design-system">→ brand guidelines</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ── 01 · OPENING WORLDVIEW · editorial cover ────── -->
+    <section class="chapter opening" id="ch-01">
+      <div class="va-grid" id="vaGrid" aria-hidden="true"></div>
+      <span class="va-spine">P51 · synthesis · worldview · 01</span>
+
+      <div class="va-top">
+        <div class="va-top-l">
+          <div class="va-logo">
+            <svg class="va-mark" id="heroMark" width="32" height="32" viewBox="0 0 110 110" aria-hidden="true">
+              <rect class="sq sq-a" x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="3" opacity="0.45"/>
+              <rect class="sq sq-b" x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="3" opacity="0.45"/>
+              <rect class="core"     x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+            </svg>
+            <span class="va-mark-rule"></span>
+            <span class="va-wordmark">PROJECT<span class="thin">·</span>51</span>
+          </div>
+          <span class="va-eyebrow">A boutique agency · est. 2026 <span class="dot"></span></span>
+        </div>
+        <div class="va-edition">
+          <span>Edition</span>
+          <strong>№ 01 · 2026</strong>
+          <span class="va-edition-serial">ISSN 0625-2026</span>
+          <span class="va-edition-filed">Filed 28.04.2026</span>
+        </div>
+      </div>
+
+      <h1 class="va-headline">
+        <span class="va-line-1">Two disciplines.</span>
+        <span class="va-line-2">One precise output.</span>
+      </h1>
+
+      <div class="va-foot">
+        <div class="va-credits">
+          <span class="va-credits-label">Credits</span>
+          <span class="va-credits-line">
+            Design + Automation · Two founders · Boutique · selective · ratio <span class="accent">0.625</span>
+          </span>
+          <span class="va-credits-filed">
+            <span class="va-credits-filed-line">Filed under <em>— synthesis, geometry, system</em></span>
+            <span class="va-credits-filed-line">Authored by Ofir / Partner · published Q2 2026</span>
+          </span>
+        </div>
+        <p class="va-body">
+          Project 51 is the synthesis of two complete disciplines — visual craft and system engineering. The work we ship looks designed. It also runs. Both halves are non-negotiable.
+        </p>
+      </div>
+
+      <div class="va-issue">
+        <span class="va-issue-label">In this issue</span>
+        <div class="va-issue-list">
+          <a class="va-issue-item is-current" href="#ch-01"><span class="num">01</span> Worldview</a>
+          <a class="va-issue-item" href="#ch-02"><span class="num">02</span> Diagnosis</a>
+          <a class="va-issue-item" href="#ch-03"><span class="num">03</span> Discipline</a>
+          <a class="va-issue-item" href="#ch-04"><span class="num">04</span> Geometry</a>
+          <a class="va-issue-item" href="#ch-05"><span class="num">05</span> Method</a>
+          <a class="va-issue-item" href="#ch-06"><span class="num">06</span> Atelier</a>
+          <a class="va-issue-item" href="#ch-07"><span class="num">07</span> Library</a>
+          <a class="va-issue-item" href="#ch-08"><span class="num">08</span> Invitation</a>
+        </div>
+        <a class="va-issue-continue" href="#ch-02">↓ Continue to 02</a>
+      </div>
+    </section>
+
+    <!-- ── 02 · DIAGNOSIS ────────────────────────────────── -->
+    <section class="chapter diagnosis" id="ch-02">
+      <span class="chapter-num">02 / DIAGNOSIS</span>
+
+      <div class="reveal diagnosis-head">
+        <span class="mono-label">— the diagnosis</span>
+        <h2 class="diagnosis-title">
+          Most products<br/>break <em>here.</em>
+        </h2>
+      </div>
+
+      <div class="reveal gap-stage">
+        <div class="gap-side-labels">
+          <span class="left">01 — what you imagine</span>
+          <span class="right">what ships — 02</span>
+        </div>
+
+        <div class="gap-words">
+          <span class="gap-word vision">vision</span>
+          <div class="gap-rail">
+            <div class="gap-losses">
+              <span class="gap-loss"><span class="minus">—</span>12% precision lost</span>
+              <span class="gap-loss"><span class="minus">—</span>240ms drift</span>
+              <span class="gap-loss"><span class="minus">—</span>intent vapourised</span>
+              <span class="gap-loss"><span class="minus">—</span>craft eroded in transit</span>
+            </div>
+          </div>
+          <span class="gap-word build">build</span>
+        </div>
+
+        <div class="gap-meta">
+          <span>where most products die</span>
+          <span class="gap-meta-value">recurring · industry-wide</span>
+        </div>
+      </div>
+
+      <div class="reveal diagnosis-verdict">
+        <p class="diagnosis-response">
+          We don't have it.<br/>
+          <em>One pair of hands ships both halves.</em>
+        </p>
+        <p class="diagnosis-response-meta">
+          The gap exists because design and engineering are usually two careers, two teams, two priorities. Here they are one mind. Nothing gets handed off because there is no other side to hand to.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── 03 · DISCIPLINE ───────────────────────────────── -->
+    <section class="chapter" id="ch-03">
+      <span class="chapter-num">03 / DISCIPLINE</span>
+
+      <div class="discipline-layout">
+        <div>
+          <div class="reveal">
+            <span class="mono-label" style="margin-bottom: var(--sp-4); display: inline-flex;">discipline</span>
+            <h2 class="discipline-statement">
+              We refuse to <em>specialise alone.</em>
+            </h2>
+            <p style="font-size: 14px; color: var(--p51-t-70); line-height: 1.75; max-width: 520px; margin-top: var(--sp-3);">
+              One designs and builds the surface. One designs and builds the engine. Neither hands off. The agency is two specialists who have abandoned the single-track career — and the gap dies with the handoff.
+            </p>
+          </div>
+
+          <div class="reveal discipline-grid">
+            <div class="discipline-pane">
+              <span class="discipline-pane-tag">PANE A · CRAFT</span>
+              <h3 class="discipline-pane-name">Designer<em>+ Engineer</em></h3>
+              <ul class="discipline-pane-list">
+                <li>Product design</li>
+                <li>Interaction & motion</li>
+                <li>React / TypeScript</li>
+                <li>Design systems</li>
+              </ul>
+            </div>
+            <div class="discipline-pane">
+              <span class="discipline-pane-tag">PANE B · SYSTEM</span>
+              <h3 class="discipline-pane-name">Automator<em>+ Strategist</em></h3>
+              <ul class="discipline-pane-list">
+                <li>Make.com flows</li>
+                <li>AI agents</li>
+                <li>Backend architecture</li>
+                <li>Growth engines</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal discipline-portrait-wrap">
+          <canvas id="disciplinePortraitCanvas" class="discipline-portrait" aria-label="Ofir"></canvas>
+          <noscript>
+            <img src="assets/ofir-photo.png" alt="Ofir" class="discipline-portrait" style="opacity:0.4"/>
+          </noscript>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 04 · GEOMETRY ───────────────────────────────── -->
+    <section class="chapter" id="ch-04">
+      <span class="chapter-num">04 / GEOMETRY</span>
+
+      <div class="reveal geometry-stage">
+        <div class="geometry-mark-frame" data-cursor="precision">
+          <div id="geometryMark"></div>
+        </div>
+
+        <div class="geometry-text">
+          <span class="mono-label">geometry · the mark</span>
+          <h2 class="geometry-headline">
+            The mark is not metaphor.<br/><em>The mark is the method, drawn.</em>
+          </h2>
+          <p style="font-size: 14px; color: var(--p51-t-70); line-height: 1.75;">
+            Two equal squares, offset along the diagonal by 30 units. Where they cross, a 50-unit core forms. The ratio 50/80 — 0.625 — propagates outward as the dominant proportion of the entire system. Every column. Every reading measure. Every dialog width.
+          </p>
+          <dl class="geometry-spec">
+            <dt>square_a</dt><dd>80 × 80</dd>
+            <dt>square_b</dt><dd>80 × 80</dd>
+            <dt>offset</dt><dd>+30, +30</dd>
+            <dt>core</dt><dd>50 × 50</dd>
+            <dt>ratio</dt><dd>0.625</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 05 · METHOD ─────────────────────────────────── -->
+    <section class="chapter" id="ch-05">
+      <span class="chapter-num">05 / METHOD</span>
+
+      <div class="reveal method-rail">
+        <div>
+          <span class="mono-label">method</span>
+          <h2 class="method-headline" style="margin-top: var(--sp-3);">
+            The work is engineered.<br/><em>Not assembled.</em>
+          </h2>
+          <p>A measured cadence. No hand-offs. Each day produces something that holds together. The agency runs against a 30-day arc.</p>
+        </div>
+
+        <div class="timeline-rail">
+          <div class="timeline-step">
+            <span class="timeline-day">DAY 01</span>
+            <span class="timeline-event">Brief intake · audit begins<span class="timeline-detail">A 90-minute session. We refuse boilerplate questionnaires.</span></span>
+            <span class="timeline-marker">+0d</span>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-day">DAY 03</span>
+            <span class="timeline-event">System map · constraints surfaced<span class="timeline-detail">The architecture, drawn. The non-obvious failure modes, listed.</span></span>
+            <span class="timeline-marker">+2d</span>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-day">DAY 07</span>
+            <span class="timeline-event">First prototype · live<span class="timeline-detail">Not a Figma file. A live URL with a working core.</span></span>
+            <span class="timeline-marker">+6d</span>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-day">DAY 14</span>
+            <span class="timeline-event">Automation engine · wired<span class="timeline-detail">The systems that run while you sleep.</span></span>
+            <span class="timeline-marker">+13d</span>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-day">DAY 30</span>
+            <span class="timeline-event">Ship · measure · refine<span class="timeline-detail">The product enters the world. The dashboard turns on.</span></span>
+            <span class="timeline-marker">+29d</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 06 · WORK PREVIEW ────────────────────────────── -->
+    <section class="chapter" id="ch-06">
+      <span class="chapter-num">06 / ATELIER</span>
+
+      <div class="reveal work-head">
+        <div>
+          <span class="mono-label">selected work</span>
+          <h2 class="discipline-statement" style="margin-top: var(--sp-3);">
+            Systems we have <em>shipped.</em>
+          </h2>
+        </div>
+        <p style="max-width: 360px; font-size: 13px; color: var(--p51-t-50); line-height: 1.7;">
+          Each project below is documented as a system-state delta — what existed before, what runs now. No marketing copy, no testimonials with smiling photos.
+        </p>
+      </div>
+
+      <div class="reveal work-grid">
+        <div class="work-card" onclick="P51.crossTo('work.html')">
+          <div class="work-card-meta"><span>01 — VOICE INTELLIGENCE</span><span>2024</span></div>
+          <h3 class="work-card-title">Hear.ai — Voice product platform</h3>
+          <p class="work-card-desc">End-to-end product design and frontend architecture for an AI-powered voice analytics suite. Shipped in 6 weeks.</p>
+          <div class="work-card-foot"><span>system · web + ios</span><span class="arrow">→</span></div>
+        </div>
+        <div class="work-card" onclick="P51.crossTo('work.html')">
+          <div class="work-card-meta"><span>02 — INFRASTRUCTURE</span><span>2025</span></div>
+          <h3 class="work-card-title">P51 — Foundational design system</h3>
+          <p class="work-card-desc">A complete visual language. Tokens, components, motion — all derived from a single geometric primitive.</p>
+          <div class="work-card-foot"><span>system · open</span><span class="arrow">→</span></div>
+        </div>
+        <div class="work-card" onclick="P51.crossTo('work.html')">
+          <div class="work-card-meta"><span>03 — AUTOMATION</span><span>2025</span></div>
+          <h3 class="work-card-title">Inbound triage engine</h3>
+          <p class="work-card-desc">An AI-augmented intake system that classifies, prioritises, and routes lead-flow without human review.</p>
+          <div class="work-card-foot"><span>system · agent</span><span class="arrow">→</span></div>
+        </div>
+        <div class="work-card" onclick="P51.crossTo('work.html')">
+          <div class="work-card-meta"><span>04 — IN PROGRESS</span><span>2026</span></div>
+          <h3 class="work-card-title">Project — under audit</h3>
+          <p class="work-card-desc">Live, not yet documentable. The chronicle is updated when the engagement closes.</p>
+          <div class="work-card-foot"><span>system · pending</span><span class="arrow">→</span></div>
+        </div>
+      </div>
+
+      <a href="work.html" class="page-link" style="margin-top: var(--sp-8);" onclick="event.preventDefault(); P51.crossTo('work.html')">
+        Open the full atelier <span class="arrow">→</span>
+      </a>
+    </section>
+
+    <!-- ── 07 · LIBRARY PREVIEW ────────────────────────── -->
+    <section class="chapter" id="ch-07">
+      <span class="chapter-num">07 / LIBRARY</span>
+
+      <div class="reveal">
+        <span class="mono-label">library</span>
+      </div>
+
+      <div class="reveal library-stage">
+        <div class="library-pitch">
+          <h2 class="library-headline">
+            Components, as <em>masterpieces.</em>
+          </h2>
+          <p>
+            Not a Figma file. A live, interactive surface where every component breathes — buttons, forms, cards, motion, geometry, charts. Each one drawn to the same 0.625 ratio, hand-tuned, deployable.
+          </p>
+          <p style="color: var(--p51-t-50); font-style: italic; font-family: var(--font-serif); font-size: 18px; line-height: 1.4;">
+            The library is the proof. Hover, click, type — every detail rewards the attention.
+          </p>
+        </div>
+
+        <div class="library-mini">
+          <div class="library-mini-cell">
+            <button class="mini-btn">Action</button>
+            <span class="library-mini-cell-label">— button</span>
+          </div>
+          <div class="library-mini-cell">
+            <input class="mini-input" placeholder="type here…"/>
+            <span class="library-mini-cell-label">— input</span>
+          </div>
+          <div class="library-mini-cell">
+            <div id="libMark" class="mini-mark"></div>
+            <span class="library-mini-cell-label">— mark</span>
+          </div>
+          <div class="library-mini-cell">
+            <svg width="100" height="40" viewBox="0 0 100 40">
+              <line x1="0" y1="32" x2="100" y2="32" stroke="rgba(240,237,232,0.08)" stroke-width="0.5"/>
+              <polyline points="0,28 20,24 40,18 60,12 80,8 100,4" fill="none" stroke="var(--chart-sacral)" stroke-width="1"/>
+              <circle cx="100" cy="4" r="2" fill="var(--chart-sacral)"/>
+            </svg>
+            <span class="library-mini-cell-label">— chart</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="library.html" class="page-link" style="margin-top: var(--sp-8);" onclick="event.preventDefault(); P51.crossTo('library.html')">
+        Enter the library <span class="arrow">→</span>
+      </a>
+    </section>
+
+    <!-- ── 08 · INVITATION ──────────────────────────────── -->
+    <section class="chapter invitation" id="ch-08">
+      <span class="chapter-num">08 / INVITATION</span>
+
+      <div class="reveal-stagger">
+        <span class="mono-label">begin</span>
+        <h2 class="invitation-headline">If this resonates,<br/>you have <em>already begun.</em></h2>
+        <p class="invitation-sub">
+          Two seats remain through Q3. We respond within 72 hours. The intake is intentionally hard — sit with it before submitting.
+        </p>
+        <div class="invitation-actions">
+          <a href="mailto:ofir@hear.ai?subject=Project%2051%20%E2%80%94%20Intake" class="btn btn-primary">
+            Begin the intake <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="p51.js"></script>
+  <script>
+    /* ── boot loader → page enter ──
+       Skip the cinematic boot when arriving from another page on the same
+       site (it's a first-impression moment, not something to sit through
+       every navigation). Also reveal immediately if the page is restored
+       from bfcache in a stuck state. */
+    (function () {
+      const boot = document.getElementById('bootLoader');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      let internalNav = false;
+      try {
+        internalNav = !!document.referrer
+          && new URL(document.referrer).origin === location.origin;
+      } catch (e) { /* malformed referrer — treat as external */ }
+
+      function reveal(immediate) {
+        document.body.classList.remove('entering');
+        if (!boot) return;
+        if (immediate) {
+          boot.remove();
+        } else {
+          boot.classList.add('done');
+          setTimeout(() => boot.remove(), 700);
+        }
+      }
+
+      if (reduced || internalNav) {
+        reveal(true);
+      } else {
+        const hold = 1750;  // converge (1400) + core (700) overlap
+        setTimeout(() => reveal(false), hold);
+      }
+
+      // bfcache restoration — page was cached mid-boot; force-reveal
+      window.addEventListener('pageshow', (e) => {
+        if (e.persisted && document.body.classList.contains('entering')) {
+          reveal(true);
+        }
+      });
+    })();
+
+    /* ── primitives ── */
+    P51.initCursor();
+    const compassEl = P51.compass({ label: 'synthesis' });
+    P51.versionStamp({ text: 'v.1 · 0' });
+    P51.trackVisit();
+
+    /* ── mount geometry mark ── */
+    const geometryMark = P51.mark({ size: 220, animate: 'breathe', strokeWidth: 1.5 });
+    document.getElementById('geometryMark').appendChild(geometryMark);
+
+    /* ── mount mini library mark ── */
+    const libMark = P51.mark({ size: 56, animate: 'breathe', strokeWidth: 2 });
+    document.getElementById('libMark').appendChild(libMark);
+
+    /* ── motion · breathing-text scroll-linked reveals ────────────
+       Every text block aligns into focus as it crosses the viewport
+       and recedes as it leaves. Scrub-linked, symmetric on reverse.
+       Tokens match the design system: power4.out ≈ --ease-expo.
+       Wrapped in DOMContentLoaded so deferred GSAP scripts are ready.
+    ─────────────────────────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', function motionSystem() {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // GSAP didn't load (offline, blocked) — show everything immediately.
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined' || reduced) {
+        document.querySelectorAll('.reveal, .reveal-stagger > *, .va-spine, .va-top-l > *, .va-edition > *, .va-headline > span, .va-foot > *, .va-issue > *')
+          .forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const M = {
+        ease: 'power4.out',          // ≈ cubic-bezier(0.16, 1, 0.3, 1) — design system --ease-expo
+        durSlow:  0.62,              // --dur-slow
+        durXSlow: 0.9,               // --dur-xslow
+      };
+
+      /* ── breathe(): one-shot fade-in as the element enters ──
+         Once an element has been seen it stays fully visible — no fade-out
+         on the way past, so reloading mid-page never leaves the viewport
+         filled with elements stuck in their exit state. */
+      function breathe(el, opts = {}) {
+        const dy   = opts.dy    ?? 14;
+        const ds   = opts.ds    ?? 0.03;
+        const move = opts.move  !== false;
+
+        gsap.set(el, { opacity: 0, scale: 1 - ds, y: move ? dy : 0 });
+
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 92%',
+          once: true,
+          onEnter: () => {
+            gsap.to(el, {
+              opacity: 1, scale: 1, y: 0,
+              duration: 0.9, ease: M.ease,
+              overwrite: 'auto',
+            });
+            el.classList.add('in');
+          },
+        });
+      }
+
+      /* ── apply to text-bearing elements ── */
+
+      // Big display headlines — slightly larger amplitude
+      const HEADLINES = '.diagnosis-title, .geometry-headline, .method-headline, .library-headline, .invitation-headline, .lib-title, .work-card-title';
+      document.querySelectorAll(HEADLINES).forEach(el => breathe(el, { dy: 18, ds: 0.04 }));
+
+      // Generic .reveal blocks — body-sized amplitude
+      document.querySelectorAll('.reveal').forEach(el => {
+        if (el.closest('.opening')) return;     // hero is handled by its own timeline
+        breathe(el, { dy: 14, ds: 0.025 });
+      });
+
+      // .reveal-stagger blocks — animate each child individually so they breathe independently
+      document.querySelectorAll('.reveal-stagger').forEach(parent => {
+        if (parent.closest('.opening')) return;
+        Array.from(parent.children).forEach(child => breathe(child, { dy: 14, ds: 0.025 }));
+      });
+
+      // Mono labels — smaller amplitude so structural marks stay quiet
+      document.querySelectorAll('.mono-label').forEach(el => {
+        if (el.closest('.opening')) return;
+        breathe(el, { dy: 8, ds: 0.015 });
+      });
+
+      /* ── HERO entrance · sequential fade-in (no sliding) ──
+         Order:
+           1. "Two disciplines." materialises
+           2. "One precise output." materialises
+           3. Logo appears top-left + GSAP converge loop becomes live
+           4. Eyebrow (green line + dot) appears next to logo
+           5. Remaining frame elements settle in
+      */
+      function heroEntrance() {
+        // initial states
+        gsap.set('.va-headline .va-line-1, .va-headline .va-line-2',
+          { opacity: 0, scale: 0.96, transformOrigin: 'left center' });
+        gsap.set('.va-logo',                                    { opacity: 0 });
+        // pre-pose the mark internals so the converge can play distinctly later
+        prepareHeroMark();
+        gsap.set('.va-eyebrow',                                 { opacity: 0 });
+        gsap.set('.va-edition > *',                             { opacity: 0, y: 10 });
+        gsap.set('.va-spine',                                   { opacity: 0, x: -10 });
+        gsap.set('.va-foot > *, .va-issue > *',                 { opacity: 0, y: 14 });
+
+        const tl = gsap.timeline({ defaults: { ease: M.ease } });
+
+        // 1 — "Two disciplines."
+        tl.to('.va-headline .va-line-1',
+          { opacity: 1, scale: 1, duration: M.durXSlow }, 0);
+
+        // 2 — "One precise output."
+        tl.to('.va-headline .va-line-2',
+          { opacity: 1, scale: 1, duration: M.durXSlow }, 0.45);
+
+        // 3 — logo lockup container fades in (rule + wordmark land immediately;
+        //     the mark internals are pre-posed offscreen, ready to converge)
+        tl.to('.va-logo',
+          { opacity: 1, duration: M.durSlow, onComplete: playHeroMarkOnce }, 1.10);
+
+        // 4 — eyebrow
+        tl.to('.va-eyebrow',
+          { opacity: 1, duration: M.durSlow }, 1.55);
+
+        // 5 — supporting frame
+        tl.to('.va-edition > *', { opacity: 1, y: 0, duration: M.durSlow, stagger: 0.06 }, 1.85)
+          .to('.va-spine',        { opacity: 1, x: 0, duration: M.durSlow }, 1.95)
+          .to('.va-foot > *',     { opacity: 1, y: 0, duration: M.durSlow, stagger: 0.10 }, 2.10)
+          .to('.va-issue > *',    { opacity: 1, y: 0, duration: M.durSlow, stagger: 0.06 }, 2.30);
+      }
+
+      /* ── hero mark · pose offscreen, then converge once after lockup is visible ── */
+      let heroMarkPlayed = false;
+      function prepareHeroMark() {
+        const svg = document.getElementById('heroMark');
+        if (!svg) return;
+        const sqA  = svg.querySelector('.sq-a');
+        const sqB  = svg.querySelector('.sq-b');
+        const core = svg.querySelector('.core');
+        if (!sqA || !sqB || !core) return;
+        gsap.set([sqA, sqB, core], { transformOrigin: '50% 50%', transformBox: 'fill-box' });
+        gsap.set(sqA,  { x: -22, y: -22, opacity: 0, rotation: -3 });
+        gsap.set(sqB,  { x:  22, y:  22, opacity: 0, rotation:  3 });
+        gsap.set(core, { scale: 0,        opacity: 0 });
+      }
+      function playHeroMarkOnce() {
+        if (heroMarkPlayed) return;
+        heroMarkPlayed = true;
+        const svg = document.getElementById('heroMark');
+        if (!svg) return;
+        const sqA  = svg.querySelector('.sq-a');
+        const sqB  = svg.querySelector('.sq-b');
+        const core = svg.querySelector('.core');
+        if (!sqA || !sqB || !core) return;
+
+        const tl = gsap.timeline();   // no repeat — plays once and stays at end state
+
+        // approach — squares converge into alignment, A leads B by 80ms
+        tl.to(sqA, { x: 0, y: 0, opacity: 0.45, rotation: 0,
+                     duration: 0.85, ease: 'expo.out' }, 0)
+          .to(sqB, { x: 0, y: 0, opacity: 0.45, rotation: 0,
+                     duration: 0.85, ease: 'expo.out' }, 0.08);
+
+        // arrive — core springs into place and stays
+        tl.to(core, { scale: 1, opacity: 1,
+                      duration: 0.55, ease: 'back.out(1.7)' }, 0.75);
+      }
+
+      /* ── hover-grid · radial mask follows the cursor over the hero ── */
+      (function initHoverGrid() {
+        const hero = document.querySelector('.opening');
+        const grid = document.getElementById('vaGrid');
+        const foot = hero ? hero.querySelector('.va-foot') : null;
+        if (!hero || !grid) return;
+
+        // confine the grid to the title region — never extend below the
+        // hairline above .va-foot (where credits/body begins).
+        function sizeGrid() {
+          if (!foot) return;
+          const heroTop = hero.getBoundingClientRect().top;
+          const footTop = foot.getBoundingClientRect().top;
+          grid.style.height = Math.max(0, footTop - heroTop) + 'px';
+        }
+        sizeGrid();
+        window.addEventListener('resize', sizeGrid, { passive: true });
+        // re-measure once layout has fully settled (fonts loaded, etc.)
+        window.addEventListener('load', sizeGrid);
+
+        hero.addEventListener('mousemove', (e) => {
+          const rect = grid.getBoundingClientRect();
+          const gx = ((e.clientX - rect.left) / rect.width  * 100).toFixed(2) + '%';
+          const gy = ((e.clientY - rect.top)  / rect.height * 100).toFixed(2) + '%';
+          grid.style.setProperty('--gx', gx);
+          grid.style.setProperty('--gy', gy);
+        }, { passive: true });
+      })();
+
+      // Wait until boot loader finishes, then fire hero + refresh ScrollTriggers
+      const BOOT_HOLD = 1750;
+      setTimeout(() => {
+        heroEntrance();
+        ScrollTrigger.refresh();
+      }, BOOT_HOLD + 80);
+    });
+
+    /* ── compass updates per chapter ── */
+    const chapters = document.querySelectorAll('.chapter');
+    const chapterNames = ['worldview','premise','discipline','geometry','method','atelier','library','invitation'];
+    const compassLabel = compassEl.querySelector('.compass-label');
+
+    const chapterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+          const idx = parseInt(entry.target.dataset.idx, 10);
+          if (compassLabel && !isNaN(idx)) {
+            compassLabel.textContent = `synthesis · ${chapterNames[idx]}`;
+          }
+        }
+      });
+    }, { threshold: [0.4] });
+
+    chapters.forEach((c, i) => {
+      c.dataset.idx = String(i);
+      chapterObserver.observe(c);
+    });
+  </script>
+
+  <!-- ── chapter 03 · DISCIPLINE · point-cloud portrait ──────────────────
+       Source photo is sampled on a grid; each non-skipped pixel becomes
+       a point in a Three.js BufferGeometry. A custom ShaderMaterial does
+       all the per-frame work on the GPU: depth from luminance, breathing
+       noise, cursor repel/parallax, and a luminance-mapped two-tone color
+       that crossfades between a "cold" idle state and a "hot" hover state.
+       Tunables live as CSS variables on :root so DevTools can drive them.
+  ───────────────────────────────────────────────────────────────────────── -->
+  <script>
+    (function disciplinePointCloud() {
+      const canvas = document.getElementById('disciplinePortraitCanvas');
+      if (!canvas) return;
+
+      const wrap = canvas.parentElement;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function readVar(name, fallback) {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+      }
+      function readNum(name, fallback) { return parseFloat(readVar(name, fallback)) || fallback; }
+
+      // Wait for THREE to finish loading (it's deferred).
+      function whenReady(cb) {
+        if (typeof THREE !== 'undefined') return cb();
+        let tries = 0;
+        const id = setInterval(() => {
+          if (typeof THREE !== 'undefined') { clearInterval(id); cb(); }
+          else if (++tries > 200) { clearInterval(id); console.warn('THREE failed to load'); }
+        }, 30);
+      }
+
+      whenReady(() => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => init(img);
+        img.onerror = () => console.warn('portrait photo failed to load');
+        img.src = 'assets/ofir-photo.png';
+      });
+
+      function init(img) {
+        // ── 1. sample the source bitmap on a grid ──
+        const step  = Math.max(2, Math.floor(readNum('--portrait-density', 3)));
+        const sCanvas = document.createElement('canvas');
+        sCanvas.width = img.naturalWidth;
+        sCanvas.height = img.naturalHeight;
+        const sctx = sCanvas.getContext('2d', { willReadFrequently: true });
+        sctx.drawImage(img, 0, 0);
+        const data = sctx.getImageData(0, 0, sCanvas.width, sCanvas.height).data;
+
+        const aspect = sCanvas.width / sCanvas.height;
+        const lumCutoff = readNum('--portrait-lum-cutoff', 0.08);
+        // fit cloud into ~±1.09 in both axes regardless of source aspect (was 0.95, +15%)
+        const fitScale = 1.09 * Math.min(1, aspect);
+        const positions = [];
+        const lums = [];
+
+        for (let y = 0; y < sCanvas.height; y += step) {
+          for (let x = 0; x < sCanvas.width; x += step) {
+            const i = (y * sCanvas.width + x) * 4;
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            const lum = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255;
+            // skip near-black pixels — drops the black background entirely so we
+            // only spend GPU cycles on the actual subject
+            if (lum < lumCutoff) continue;
+            const px = (x / sCanvas.width  - 0.5) *  2.0 * fitScale;
+            const py = (0.5 - y / sCanvas.height) * 2.0 * fitScale / aspect;
+            positions.push(px, py, 0);
+            lums.push(lum);
+          }
+        }
+
+        if (positions.length === 0) {
+          console.warn('[portrait] no points after sampling — check lum-cutoff or image');
+          return;
+        }
+        console.info(`[portrait] sampled ${positions.length / 3} points from ${sCanvas.width}×${sCanvas.height} (step=${step}, cutoff=${lumCutoff})`);
+
+        // ── 2. three.js scene ──
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        camera.position.z = 2.6;
+
+        function colorVec(name, fallback) {
+          return new THREE.Color(readVar(name, fallback));
+        }
+
+        const uniforms = {
+          uTime:          { value: 0 },
+          uMouse:         { value: new THREE.Vector2(0, 0) },
+          uHover:         { value: 0 },   // drives color tint — fires for wrap OR card hover
+          uPointerActive: { value: 0 },   // drives cursor repel — fires only when over the wrap
+          uColor:         { value: colorVec('--portrait-color',      '#c8ff00') },
+          uColorCold:     { value: colorVec('--portrait-color-cold', '#4a4a4a') },
+          uColorDark:     { value: colorVec('--portrait-color-dark', '#0a0a0a') },
+          uPointSize:     { value: readNum('--portrait-point-size',  1.9) },
+          uDepth:         { value: readNum('--portrait-depth',       0.55) },
+          uNoise:         { value: readNum('--portrait-noise',       0.035) },
+          uMouseForce:    { value: readNum('--portrait-mouse-force', 0.22) },
+          uParallax:      { value: readNum('--portrait-parallax',    0.18) },
+          uPixelRatio:    { value: renderer.getPixelRatio() },
+          uAspect:        { value: aspect },
+        };
+
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geom.setAttribute('aLum',     new THREE.Float32BufferAttribute(lums, 1));
+
+        const mat = new THREE.ShaderMaterial({
+          uniforms,
+          transparent: true,
+          depthWrite: false,
+          vertexShader: /* glsl */`
+            uniform float uTime;
+            uniform vec2  uMouse;
+            uniform float uHover;
+            uniform float uPointerActive;
+            uniform float uPointSize;
+            uniform float uDepth;
+            uniform float uNoise;
+            uniform float uMouseForce;
+            uniform float uPixelRatio;
+            attribute float aLum;
+            varying float vLum;
+
+            void main() {
+              vLum = aLum;
+              vec3 pos = position;
+
+              // depth from luminance — dark recedes, bright pushes forward
+              pos.z += (aLum - 0.5) * uDepth;
+
+              // gentle breathing — per-point phase from xy
+              float n = sin(uTime * 0.6 + position.x * 4.0 + position.y * 5.0);
+              pos.z += n * uNoise;
+              pos.x += cos(uTime * 0.5 + position.y * 3.0) * uNoise * 0.4;
+
+              // cursor scatter — each point near the cursor drifts in its own
+              // pseudo-random direction. Per-point seed keeps the scatter coherent
+              // (one point doesn't randomise frame-to-frame), uTime modulates the
+              // direction slowly so the cluster looks alive but never jittery.
+              vec2 toMouse = pos.xy - uMouse;
+              float d = length(toMouse);
+              float fall = smoothstep(0.6, 0.0, d) * uPointerActive;
+              float seed  = fract(sin(dot(position.xy, vec2(127.1, 311.7))) * 43758.5453);
+              float seed2 = fract(sin(dot(position.xy, vec2(269.5, 183.3))) * 43758.5453);
+              float angle = seed * 6.2831853 + uTime * (0.35 + seed2 * 0.25);
+              vec2 dir = vec2(cos(angle), sin(angle));
+              // soft envelope so each point eases in/out of its scatter independently
+              float envelope = 0.5 + 0.5 * sin(uTime * 0.8 + seed * 6.2831853);
+              pos.xy += dir * fall * uMouseForce * envelope;
+              pos.z  += (seed - 0.5) * fall * 0.18;
+
+              vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
+              gl_Position = projectionMatrix * mvPos;
+
+              // size: base * lum boost * perspective compensation, with hover bump
+              float sizeBoost = 1.0 + aLum * 0.7 + uHover * 0.4;
+              gl_PointSize = uPointSize * uPixelRatio * sizeBoost * (1.6 / -mvPos.z);
+            }
+          `,
+          fragmentShader: /* glsl */`
+            uniform vec3  uColor;
+            uniform vec3  uColorCold;
+            uniform vec3  uColorDark;
+            uniform float uHover;
+            varying float vLum;
+
+            void main() {
+              // soft-edged disc
+              vec2 c = gl_PointCoord - 0.5;
+              float r = length(c);
+              if (r > 0.5) discard;
+              float alpha = 1.0 - smoothstep(0.34, 0.5, r);
+
+              // cold (idle) ramp: dark → desaturated cool
+              vec3 cold = mix(vec3(0.025), uColorCold, vLum);
+              // hot (hover) ramp: deep dark → accent color, brighter at the highlights
+              vec3 hot  = mix(uColorDark, uColor, smoothstep(0.05, 0.95, vLum));
+              hot += pow(vLum, 4.0) * uColor * 0.4; // specular kick on highlights
+
+              vec3 col = mix(cold, hot, uHover);
+              gl_FragColor = vec4(col, alpha);
+            }
+          `,
+        });
+
+        const points = new THREE.Points(geom, mat);
+        scene.add(points);
+
+        // ── 3. resize handling ──
+        function resize() {
+          const r = wrap.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) return;
+          renderer.setSize(r.width, r.height, false);
+          camera.aspect = r.width / r.height;
+          camera.updateProjectionMatrix();
+        }
+        resize();
+        const ro = new ResizeObserver(resize);
+        ro.observe(wrap);
+
+        // ── 4. interaction ──
+        // Two separate triggers so card-hover lights up the cloud without
+        // moving any points (the cursor isn't actually over the cloud):
+        //   targetHover         — color tint, fires for wrap OR card hover
+        //   targetPointerActive — repel + parallax, fires for wrap hover only
+        const targetMouse = new THREE.Vector2(0, 0);
+        let targetHover = 0;
+        let targetPointerActive = 0;
+        let mouseInside = false;
+
+        // Only the first pane (PANE A · CRAFT — Designer + Engineer) lights the cloud.
+        const panes = Array.from(document.querySelectorAll('.discipline-pane')).slice(0, 1);
+        const hoverTriggers = [wrap, ...panes];
+
+        function recomputeHover() {
+          targetHover = hoverTriggers.some(el => el.matches(':hover')) ? 1 : 0;
+        }
+
+        wrap.addEventListener('pointermove', (e) => {
+          const r = wrap.getBoundingClientRect();
+          const x = ((e.clientX - r.left) / r.width  - 0.5) *  2.0;
+          const y = ((e.clientY - r.top)  / r.height - 0.5) * -2.0;
+          targetMouse.set(x, y);
+        });
+        wrap.addEventListener('pointerenter', () => {
+          mouseInside = true;
+          targetPointerActive = 1;
+          recomputeHover();
+        });
+        wrap.addEventListener('pointerleave', () => {
+          mouseInside = false;
+          targetPointerActive = 0;
+          recomputeHover();
+        });
+        panes.forEach(p => {
+          p.addEventListener('pointerenter', recomputeHover);
+          p.addEventListener('pointerleave', recomputeHover);
+        });
+
+        // ── 5. live re-read CSS variables (so DevTools changes take effect) ──
+        let varTick = 0;
+        function refreshVarsIfChanged() {
+          if (++varTick % 30 !== 0) return; // ~2× per second
+          uniforms.uColor.value.set(readVar('--portrait-color',      '#c8ff00'));
+          uniforms.uColorCold.value.set(readVar('--portrait-color-cold', '#4a4a4a'));
+          uniforms.uColorDark.value.set(readVar('--portrait-color-dark', '#0a0a0a'));
+          uniforms.uPointSize.value  = readNum('--portrait-point-size',  1.9);
+          uniforms.uDepth.value      = readNum('--portrait-depth',       0.55);
+          uniforms.uNoise.value      = readNum('--portrait-noise',       0.035);
+          uniforms.uMouseForce.value = readNum('--portrait-mouse-force', 0.22);
+          uniforms.uParallax.value   = readNum('--portrait-parallax',    0.18);
+        }
+
+        // ── 6. animation loop ──
+        const clock = new THREE.Clock();
+        function loop() {
+          uniforms.uTime.value = clock.getElapsedTime();
+          // smooth-lerp mouse + hover + pointer-active so transitions feel inertial
+          uniforms.uMouse.value.lerp(targetMouse, 0.10);
+          uniforms.uHover.value         += (targetHover         - uniforms.uHover.value)         * 0.06;
+          uniforms.uPointerActive.value += (targetPointerActive - uniforms.uPointerActive.value) * 0.08;
+
+          // subtle parallax: only when cursor is actually over the cloud
+          const px = mouseInside ? targetMouse.x : 0;
+          const py = mouseInside ? targetMouse.y : 0;
+          const par = uniforms.uParallax.value * uniforms.uPointerActive.value;
+          points.rotation.y += (px * par - points.rotation.y) * 0.05;
+          points.rotation.x += (-py * par * 0.6 - points.rotation.x) * 0.05;
+
+          refreshVarsIfChanged();
+          renderer.render(scene, camera);
+          requestAnimationFrame(loop);
+        }
+        if (!reduced) loop();
+        else renderer.render(scene, camera); // single static render for reduced-motion users
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+/* ═══════════════════════════════════════════════════════════════
+   P51 · DESIGN TOKENS
+   The physics of information.
+   Every value here descends from one of two primitives:
+     · 8px  — the spatial unit
+     · 0.625 — the intersection ratio (50/80)
+═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@200;300;400&display=swap');
+
+:root {
+  /* ── surfaces ── */
+  --p51-black:      #060606;
+  --p51-ink:        #0d0d0d;
+  --p51-surface:    #131313;
+  --p51-elevated:   #181818;
+  --p51-white:      #f0ede8;
+  --p51-border:     rgba(240,237,232,0.08);
+  --p51-border-hi:  rgba(240,237,232,0.18);
+
+  /* ── opacity ladder ── */
+  --p51-t-100: rgba(240,237,232,1);
+  --p51-t-90:  rgba(240,237,232,0.90);
+  --p51-t-70:  rgba(240,237,232,0.70);
+  --p51-t-50:  rgba(240,237,232,0.50);
+  --p51-t-30:  rgba(240,237,232,0.30);
+  --p51-t-15:  rgba(240,237,232,0.15);
+  --p51-t-08:  rgba(240,237,232,0.08);
+  --p51-t-04:  rgba(240,237,232,0.04);
+
+  /* ── chart palette (data only) ── */
+  --chart-sacral: rgba(200,255,0,0.62);
+  --chart-ajna:   rgba(120,170,255,0.55);
+  --chart-throat: rgba(255,140,80,0.50);
+  --chart-spleen: rgba(180,120,255,0.50);
+  --chart-heart:  rgba(255,90,120,0.50);
+  --chart-root:   rgba(140,90,60,0.55);
+  --chart-solar:  rgba(255,210,80,0.50);
+  --chart-ego:    rgba(255,180,180,0.45);
+
+  /* ── type families ── */
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-serif:   'Instrument Serif', 'Times New Roman', serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── spacing — 8px grid ── */
+  --sp-0:  4px;   --sp-1:  8px;   --sp-2:  16px;  --sp-3:  24px;
+  --sp-4:  32px;  --sp-5:  40px;  --sp-6:  48px;  --sp-7:  56px;
+  --sp-8:  64px;  --sp-10: 80px;  --sp-12: 96px;  --sp-16: 128px;
+  --sp-20: 160px;
+
+  /* ── geometry constants ── */
+  --p51-ratio:  0.625;   /* the intersection ratio · 50/80 */
+  --p51-cols:   1fr 0.625fr 1fr;
+
+  /* ── motion ── */
+  --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-inout:   cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-instant:  100ms;
+  --dur-fast:     180ms;
+  --dur-mid:      380ms;
+  --dur-slow:     620ms;
+  --dur-xslow:    900ms;
+  --dur-cinematic: 1400ms;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+
+body {
+  background: var(--p51-black);
+  color: var(--p51-white);
+  font-family: var(--font-display);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: none; }
+ul, ol { list-style: none; }
+
+/* hide the browser's default text/link cursors everywhere — only the custom cursor shows */
+*, *::before, *::after { cursor: none; }
+@media (hover: none) {
+  *, *::before, *::after { cursor: auto; }
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── selection style · brand-aligned, never the browser-blue block ── */
+::selection      { background: rgba(200,255,0,0.22); color: var(--p51-white); text-shadow: none; }
+::-moz-selection { background: rgba(200,255,0,0.22); color: var(--p51-white); text-shadow: none; }
+
+/* display / decorative elements are not selectable — only body copy is */
+h1, h2, h3, .va-headline, .va-spine, .va-eyebrow, .va-credits-label, .va-issue-label, .va-issue-item,
+.va-edition, .va-edition-serial, .va-edition-filed,
+.mono-label, .meta-strip, .compass, .version-stamp,
+.cursor-dot, .cursor-ring, .boot, .boot-label,
+.opening-mark, .opening-mark-stage, .om-layer, .va-mark,
+svg, img, .chapter-num,
+.diagnosis-title, .geometry-headline, .method-headline, .library-headline, .invitation-headline,
+.work-card-title, .lib-title {
+  -webkit-user-select: none;
+          user-select: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRIMITIVES
+═══════════════════════════════════════════════════════════════ */
+
+/* ── mark ── */
+.p51-mark {
+  display: block;
+  flex-shrink: 0;
+}
+.p51-mark .sq-a, .p51-mark .sq-b {
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* breathing animation — slow, subliminal */
+@keyframes p51-breathe-a {
+  0%, 100% { transform: translate(0px, 0px); }
+  50%      { transform: translate(-2px, -2px); }
+}
+@keyframes p51-breathe-b {
+  0%, 100% { transform: translate(0px, 0px); }
+  50%      { transform: translate(2px, 2px); }
+}
+.p51-mark.breathing .sq-a { animation: p51-breathe-a 8s var(--ease-inout) infinite; }
+.p51-mark.breathing .sq-b { animation: p51-breathe-b 8s var(--ease-inout) infinite; }
+
+/* convergence — used on transitions */
+@keyframes p51-converge-a {
+  to { transform: translate(15px, 15px); opacity: 0; }
+}
+@keyframes p51-converge-b {
+  to { transform: translate(-15px, -15px); opacity: 0; }
+}
+.p51-mark.converging .sq-a { animation: p51-converge-a 800ms var(--ease-expo) forwards; }
+.p51-mark.converging .sq-b { animation: p51-converge-b 800ms var(--ease-expo) forwards; }
+.p51-mark.converging .core { animation: core-pulse 1000ms var(--ease-expo) forwards; }
+@keyframes core-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ── cursor ── */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot {
+  width: 4px; height: 4px;
+  background: var(--p51-white);
+  border-radius: 50%;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid var(--p51-t-30);
+  border-radius: 50%;
+  transition: width var(--dur-mid) var(--ease-expo),
+              height var(--dur-mid) var(--ease-expo),
+              border-color var(--dur-fast);
+}
+body:has(a:hover) .cursor-ring,
+body:has(button:hover) .cursor-ring,
+body:has([data-cursor="precision"]:hover) .cursor-ring {
+  width: 48px; height: 48px;
+  border-color: var(--p51-t-70);
+}
+
+@media (hover: none) {
+  body { cursor: auto; }
+  .cursor-dot, .cursor-ring { display: none; }
+}
+
+/* ── compass · the navigation instrument ── */
+.compass {
+  position: fixed;
+  bottom: var(--sp-3);
+  left: var(--sp-3);
+  z-index: 100;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--p51-t-50);
+}
+.compass-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--p51-border);
+  border-radius: 100px;
+  background: rgba(6,6,6,0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: none;
+  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+}
+.compass-trigger:hover {
+  color: var(--p51-white);
+  border-color: var(--p51-border-hi);
+  background: rgba(6,6,6,0.9);
+}
+.compass-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--p51-white);
+  position: relative;
+  flex-shrink: 0;
+}
+.compass-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid var(--p51-white);
+  border-radius: 50%;
+  opacity: 0.4;
+}
+.compass-arrow { color: var(--p51-t-30); }
+
+/* ── compass panel — opens on hover ── */
+.compass-panel {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  min-width: 240px;
+  background: var(--p51-surface);
+  border: 1px solid var(--p51-border-hi);
+  border-radius: 12px;
+  padding: var(--sp-2);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-expo),
+              transform var(--dur-mid) var(--ease-expo);
+}
+.compass:hover .compass-panel {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.compass-panel-head {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--p51-t-30);
+  text-transform: uppercase;
+  padding: 6px 10px var(--sp-1);
+  border-bottom: 1px solid var(--p51-border);
+}
+.compass-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--p51-t-70);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: none;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.compass-node:hover { background: var(--p51-t-04); color: var(--p51-white); }
+.compass-node.active { color: var(--p51-white); background: var(--p51-t-04); }
+.compass-node-tag {
+  font-size: 9px;
+  color: var(--p51-t-30);
+  letter-spacing: 0.06em;
+}
+
+/* ── version stamp ── */
+.version-stamp {
+  position: fixed;
+  bottom: var(--sp-3);
+  right: var(--sp-3);
+  z-index: 100;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--p51-t-30);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.version-stamp::after {
+  content: '';
+  width: 16px; height: 1px;
+  background: var(--p51-t-30);
+}
+
+/* ── meta strip ── */
+.meta-strip {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--sp-7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-3);
+  z-index: 90;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--p51-t-30);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.meta-strip > * { pointer-events: auto; }
+.meta-strip a:hover { color: var(--p51-white); }
+.meta-strip-links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  pointer-events: auto;
+}
+
+/* ── koan (sacred text) ── */
+.koan {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.43;
+  letter-spacing: -0.01em;
+  color: var(--p51-t-90);
+  max-width: calc(100vw * var(--p51-ratio));
+  text-align: center;
+  margin: 0 auto;
+}
+.koan .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 700ms var(--ease-expo),
+              transform 700ms var(--ease-expo);
+}
+.koan.revealed .word {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── mono label ── */
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--p51-t-30);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.mono-label::before {
+  content: '';
+  width: 18px; height: 1px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.mono-label.no-rule::before { display: none; }
+
+/* ── hairline ── */
+.hairline {
+  display: block;
+  background: var(--p51-white);
+  border: none;
+  height: 1px;
+  opacity: 0.3;
+  margin: 0;
+}
+.hairline.faint { opacity: 0.08; }
+.hairline.full  { opacity: 1; }
+
+/* ── reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .p51-mark.breathing .sq-a,
+  .p51-mark.breathing .sq-b { animation: none; }
+  .koan .word { opacity: 1; transform: none; }
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hero · Variation A3 — Counterpoint</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="stylesheet" href="tokens.css"/>
+  <style>
+    /* ── Variation A3: Counterpoint ───────────────────────────────
+       Editorial Cover, but the two headline lines live on opposite
+       edges, creating a diagonal read. The mark slips between them
+       as a tiny pivot point. Full-bleed editorial energy.
+    ──────────────────────────────────────────────────────────── */
+
+    body { line-height: 1.5; }
+
+    .va-hero {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(40px, 7vw, 96px) clamp(28px, 6vw, 80px);
+      gap: clamp(40px, 6vw, 72px);
+      position: relative;
+    }
+
+    /* TOP: just the eyebrow, no mark — mark moves into the headline */
+    .va-top {
+      display: flex;
+      align-items: center;
+    }
+    .va-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--p51-t-50);
+    }
+    .va-eyebrow::before {
+      content: '';
+      width: 22px; height: 1px;
+      background: var(--chart-sacral);
+    }
+    .va-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--chart-sacral);
+      box-shadow: 0 0 12px rgba(200,255,0,0.5);
+      animation: vaPulse 2.4s var(--ease-inout) infinite;
+    }
+    @keyframes vaPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)} }
+
+    /* the headline · counterpoint composition
+       line 1 flush left, line 2 flush right with the mark hinging between */
+    .va-headline {
+      font-family: var(--font-display);
+      font-weight: 100;
+      font-size: clamp(56px, 11.5vw, 200px);
+      line-height: 0.92;
+      letter-spacing: -0.045em;
+      margin: 0;
+      align-self: center;
+      display: grid;
+      grid-template-rows: auto auto auto;
+      row-gap: clamp(16px, 2vw, 32px);
+    }
+    .va-headline span { display: block; }
+    .va-headline .va-line-1 {
+      justify-self: start;
+      text-align: left;
+    }
+    .va-headline .va-line-2 {
+      justify-self: end;
+      text-align: right;
+      color: var(--p51-t-50);
+    }
+    .va-headline .va-pivot {
+      justify-self: center;
+      width: clamp(40px, 5vw, 72px);
+      height: clamp(40px, 5vw, 72px);
+      align-self: center;
+    }
+    .va-headline .va-pivot svg { width: 100%; height: 100%; display: block; }
+
+    /* bottom: hairline · credits · body */
+    .va-foot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px, 5vw, 80px);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--p51-border);
+    }
+    .va-credits {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+    }
+    .va-credits-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--p51-t-30);
+    }
+    .va-credits-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--p51-white);
+      letter-spacing: 0.04em;
+    }
+    .va-credits-line .accent { color: var(--chart-sacral); }
+    .va-body {
+      font-size: clamp(14px, 1.3vw, 16px);
+      line-height: 1.7;
+      color: var(--p51-t-70);
+      max-width: 56ch;
+    }
+
+    @media (max-width: 760px) {
+      .va-foot { grid-template-columns: 1fr; gap: var(--sp-5); }
+      .va-headline .va-line-1,
+      .va-headline .va-line-2 { justify-self: start; text-align: left; }
+      .va-headline .va-pivot { justify-self: start; }
+    }
+
+    .va-stamp {
+      position: fixed;
+      bottom: 18px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--p51-t-30);
+      text-transform: uppercase;
+      z-index: 50;
+      white-space: nowrap;
+    }
+    .va-stamp a { color: var(--p51-t-50); }
+    .va-stamp a:hover { color: var(--p51-white); }
+  </style>
+</head>
+<body>
+
+  <section class="va-hero">
+
+    <div class="va-top">
+      <span class="va-eyebrow">A boutique agency · est. 2026 <span class="dot"></span></span>
+    </div>
+
+    <h1 class="va-headline">
+      <span class="va-line-1">Two disciplines.</span>
+      <span class="va-pivot" aria-hidden="true">
+        <svg viewBox="0 0 110 110">
+          <rect x="0"  y="0"  width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.45"/>
+          <rect x="30" y="30" width="80" height="80" fill="none" stroke="#f0ede8" stroke-width="2" opacity="0.45"/>
+          <rect x="30" y="30" width="50" height="50" fill="#f0ede8"/>
+        </svg>
+      </span>
+      <span class="va-line-2">One precise output.</span>
+    </h1>
+
+    <div class="va-foot">
+      <div class="va-credits">
+        <span class="va-credits-label">Credits</span>
+        <span class="va-credits-line">
+          Design + Automation · Two founders · Boutique · selective · ratio <span class="accent">0.625</span>
+        </span>
+      </div>
+      <p class="va-body">
+        Project 51 is the synthesis of two complete disciplines — visual craft and system engineering. The work we ship looks designed. It also runs. Both halves are non-negotiable.
+      </p>
+    </div>
+
+  </section>
+
+  <span class="va-stamp"><a href="hero-a2">← A2</a> &nbsp; · &nbsp; Variation A3 · Counterpoint &nbsp; · &nbsp; <a href="hero-a">A →</a></span>
+
+</body>
+</html>
