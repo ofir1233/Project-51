@@ -2112,8 +2112,19 @@
         const positions = [];
         const lums = [];
 
-        for (let y = 0; y < sCanvas.height; y += step) {
-          for (let x = 0; x < sCanvas.width; x += step) {
+        // grid-indexed keep map so we can compute an edge factor per point
+        // (a point is "edge" when its 8 grid neighbours are mostly background)
+        const cols = Math.ceil(sCanvas.width  / step);
+        const rows = Math.ceil(sCanvas.height / step);
+        const kept = new Uint8Array(cols * rows);
+        const keptIdx = new Int32Array(cols * rows); keptIdx.fill(-1);
+
+        for (let cy = 0; cy < rows; cy++) {
+          const y = cy * step;
+          if (y >= sCanvas.height) break;
+          for (let cx = 0; cx < cols; cx++) {
+            const x = cx * step;
+            if (x >= sCanvas.width) break;
             const i = (y * sCanvas.width + x) * 4;
             const r = data[i], g = data[i + 1], b = data[i + 2];
             const lum = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255;
@@ -2122,8 +2133,30 @@
             if (lum < lumCutoff) continue;
             const px = (x / sCanvas.width  - 0.5) *  2.0 * fitScale;
             const py = (0.5 - y / sCanvas.height) * 2.0 * fitScale / aspect;
+            const gi = cy * cols + cx;
+            keptIdx[gi] = positions.length / 3;
+            kept[gi] = 1;
             positions.push(px, py, 0);
             lums.push(lum);
+          }
+        }
+
+        // edge factor: 0 = interior point, 1 = fully exposed (all 8 neighbours empty)
+        const edges = new Float32Array(positions.length / 3);
+        for (let cy = 0; cy < rows; cy++) {
+          for (let cx = 0; cx < cols; cx++) {
+            const idx = keptIdx[cy * cols + cx];
+            if (idx < 0) continue;
+            let missing = 0;
+            for (let dy = -1; dy <= 1; dy++) {
+              for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                const nx = cx + dx, ny = cy + dy;
+                if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) { missing++; continue; }
+                if (!kept[ny * cols + nx]) missing++;
+              }
+            }
+            edges[idx] = missing / 8;
           }
         }
 
@@ -2164,6 +2197,7 @@
         const geom = new THREE.BufferGeometry();
         geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geom.setAttribute('aLum',     new THREE.Float32BufferAttribute(lums, 1));
+        geom.setAttribute('aEdge',    new THREE.Float32BufferAttribute(edges, 1));
 
         const mat = new THREE.ShaderMaterial({
           uniforms,
@@ -2180,6 +2214,7 @@
             uniform float uMouseForce;
             uniform float uPixelRatio;
             attribute float aLum;
+            attribute float aEdge;
             varying float vLum;
 
             void main() {
@@ -2194,6 +2229,21 @@
               pos.z += n * uNoise;
               pos.x += cos(uTime * 0.5 + position.y * 3.0) * uNoise * 0.4;
 
+              // per-point seeds — used by both edge fray and cursor scatter
+              float seed  = fract(sin(dot(position.xy, vec2(127.1, 311.7))) * 43758.5453);
+              float seed2 = fract(sin(dot(position.xy, vec2(269.5, 183.3))) * 43758.5453);
+
+              // ── constant edge fray ──
+              // Silhouette points (aEdge ≈ 1) drift slowly outward in a
+              // per-point pseudo-random direction; interior points stay put.
+              // Effect is always-on but very subtle — like a soft halo of dust.
+              float edgeMask = smoothstep(0.18, 0.6, aEdge);
+              float eAng = seed * 6.2831853 + uTime * (0.25 + seed2 * 0.2);
+              vec2  eDir = vec2(cos(eAng), sin(eAng));
+              float eEnv = 0.5 + 0.5 * sin(uTime * 0.55 + seed2 * 6.2831853);
+              pos.xy += eDir * edgeMask * 0.022 * (0.55 + eEnv * 0.55);
+              pos.z  += (seed - 0.5) * edgeMask * 0.012 * eEnv;
+
               // cursor scatter — each point near the cursor drifts in its own
               // pseudo-random direction. Per-point seed keeps the scatter coherent
               // (one point doesn't randomise frame-to-frame), uTime modulates the
@@ -2201,8 +2251,6 @@
               vec2 toMouse = pos.xy - uMouse;
               float d = length(toMouse);
               float fall = smoothstep(0.6, 0.0, d) * uPointerActive;
-              float seed  = fract(sin(dot(position.xy, vec2(127.1, 311.7))) * 43758.5453);
-              float seed2 = fract(sin(dot(position.xy, vec2(269.5, 183.3))) * 43758.5453);
               float angle = seed * 6.2831853 + uTime * (0.35 + seed2 * 0.25);
               vec2 dir = vec2(cos(angle), sin(angle));
               // soft envelope so each point eases in/out of its scatter independently
