@@ -1408,6 +1408,29 @@
         margin-top: var(--sp-6);
       }
     }
+
+    /* ── LAB link (top-right, localhost-only) ── */
+    .lab-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border: 1px solid rgba(200, 255, 0, 0.40);
+      border-radius: 100px;
+      color: rgba(200, 255, 0, 0.90);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: all var(--dur-fast) var(--ease-expo);
+      cursor: none;
+    }
+    .lab-link:hover {
+      background: rgba(200, 255, 0, 0.12);
+      border-color: rgba(200, 255, 0, 0.85);
+      color: rgb(200, 255, 0) !important;
+      box-shadow: 0 0 18px rgba(200, 255, 0, 0.18);
+    }
   </style>
 </head>
 <body class="entering">
@@ -1428,9 +1451,19 @@
   <div class="meta-strip">
     <span>P51 / SYNTHESIS</span>
     <div class="meta-strip-links">
+      <a class="lab-link" href="/p51/lab.html" data-localhost-only title="The Lab — local iteration tool">▢ LAB</a>
       <a href="../p51-design-system">→ brand guidelines</a>
     </div>
   </div>
+
+  <script>
+    /* Hide the LAB link unless we're running on localhost.
+       The Lab is a local-only Express tool; on the deployed site it would 404. */
+    (function () {
+      var ok = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+      if (!ok) document.querySelectorAll('[data-localhost-only]').forEach(function (el) { el.hidden = true; });
+    })();
+  </script>
 
   <main>
 
