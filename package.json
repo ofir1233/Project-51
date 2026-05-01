@@ -1,0 +1,23 @@
+{
+  "name": "project51-lab",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Project 51 portfolio site + local-only Lab iteration tool",
+  "scripts": {
+    "start": "node server/index.mjs",
+    "dev": "node --watch server/index.mjs",
+    "migrate": "node server/migrate.mjs",
+    "lab": "node server/index.mjs --open-lab"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0",
+    "sharp": "^0.34.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

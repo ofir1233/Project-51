@@ -1,0 +1,24 @@
+# ── Lab (local-only Node Express + agent SaaS WIP) ──
+# Vercel doesn't run long-lived servers; the Lab cannot deploy here.
+# Even when these files are committed to git for archival, exclude
+# them from the production upload so they're not publicly served.
+server/
+p51/lab.html
+p51/lab/
+package.json
+package-lock.json
+node_modules/
+
+# ── Local data / secrets ──
+.lab/
+.claude/
+
+# ── Strategy / planning docs (keep in repo, not in deploy) ──
+VISION.md
+
+# ── OS / editor cruft ──
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>P51 · LAB</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/p51/tokens.css">
+  <link rel="stylesheet" href="/p51/lab/lab.css">
+  <script src="https://unpkg.com/three@0.149.0/build/three.min.js" defer></script>
+  <script type="module" src="/p51/lab/app.mjs"></script>
+</head>
+<body class="lab">
+
+  <header class="lab-strip">
+    <span class="title">P51 · LAB</span>
+    <span class="sep">/</span>
+    <nav class="lab-modes" data-role="modes">
+      <button class="lab-mode is-on" data-mode="create" data-step="1">
+        <span class="lab-mode-num">01</span>
+        <span class="lab-mode-name">CREATE</span>
+        <span class="lab-mode-sub">generate</span>
+        <span class="lab-mode-dot" data-role="step-dot-create"></span>
+      </button>
+      <span class="lab-mode-arrow">→</span>
+      <button class="lab-mode" data-mode="choreograph" data-step="2">
+        <span class="lab-mode-num">02</span>
+        <span class="lab-mode-name">CHOREOGRAPH</span>
+        <span class="lab-mode-sub">group · react</span>
+        <span class="lab-mode-dot" data-role="step-dot-choreograph"></span>
+      </button>
+      <span class="lab-mode-arrow">→</span>
+      <button class="lab-mode" data-mode="stage" data-step="3">
+        <span class="lab-mode-num">03</span>
+        <span class="lab-mode-name">STAGE</span>
+        <span class="lab-mode-sub">preview · ship</span>
+        <span class="lab-mode-dot" data-role="step-dot-stage"></span>
+      </button>
+    </nav>
+    <span class="lab-status" data-role="status" data-state="idle">idle</span>
+    <span class="spacer"></span>
+    <span class="lab-strip-pill" data-role="provider-pill">— · —</span>
+    <span class="lab-strip-pill" data-role="health-pill">/api/health</span>
+  </header>
+
+  <main class="lab-grid" data-mode="create">
+
+    <!-- ── HISTORY (always visible across all modes) ── -->
+    <aside class="lab-col" data-shown-in="create choreograph stage">
+      <div class="lab-col-head">
+        <span class="mono-label">history</span>
+        <input class="input" type="text" placeholder="search prompt or goal…" data-role="search">
+        <div class="lab-filters" data-role="filters">
+          <button class="lab-chip is-on" data-filter="visible">visible</button>
+          <button class="lab-chip" data-filter="starred">starred</button>
+          <button class="lab-chip" data-filter="hidden">hidden</button>
+          <button class="lab-chip" data-filter="all">all</button>
+        </div>
+      </div>
+      <div class="lab-col-body">
+        <ol class="lab-history-list" data-role="history-list"></ol>
+        <div class="lab-history-empty" data-role="history-empty">
+          <div class="lab-empty-title">no generations yet</div>
+          <p class="lab-empty-body">type a goal in the COMPOSE panel and click <strong>RUN CHAIN</strong>.<br>or try our preset to see the loop:</p>
+          <button class="btn btn-md btn-accent" data-role="run-example">▶ RUN EXAMPLE</button>
+          <p class="lab-empty-foot">the chain takes ~60–90s · architect → prompt-writer → generator → critic → refiner → judge</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── COMPOSE (CREATE mode) ── -->
+    <section class="lab-col" data-shown-in="create">
+      <div class="lab-col-head">
+        <span class="mono-label">compose</span>
+        <span class="mono-label no-rule" data-role="run-id" style="color: var(--p51-t-15);">run · —</span>
+      </div>
+      <div class="lab-col-body">
+
+        <div class="field">
+          <label class="field-label">goal</label>
+          <textarea class="textarea" data-role="goal" rows="4"
+            placeholder="e.g. pair point cloud · lime sacral palette · halftone Op-Art linework · partner with glasses left, me right · classical building backdrop"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">references</label>
+          <div class="lab-refs" data-role="refs"></div>
+          <div class="lab-ref-upload" data-role="ref-drop">
+            <input type="file" data-role="ref-file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            <button class="btn btn-sm btn-ghost" data-role="ref-pick">+ UPLOAD REFS</button>
+            <span class="lab-ref-hint">drop images here</span>
+          </div>
+        </div>
+
+        <div class="lab-primary-action">
+          <button class="btn btn-lg btn-accent lab-run-primary" data-role="run-chain" disabled>
+            <span>▶ RUN CHAIN</span>
+            <span class="lab-run-hint" data-role="run-hint">— add a goal first</span>
+          </button>
+          <button class="btn btn-md btn-danger" data-role="abort" hidden>ABORT</button>
+        </div>
+
+        <details class="lab-advanced">
+          <summary class="lab-advanced-summary">
+            <span class="field-label">advanced</span>
+            <span class="lab-advanced-summary-vals" data-role="advanced-summary">iters 3 · score ≥ 8 · gemini-image</span>
+          </summary>
+          <div class="lab-controls-row">
+            <div class="field" style="max-width: 80px;">
+              <label class="field-label">iters</label>
+              <input class="input" type="number" min="1" max="6" value="3" data-role="max-iters">
+            </div>
+            <div class="field" style="max-width: 100px;">
+              <label class="field-label">score ≥</label>
+              <input class="input" type="number" min="1" max="10" step="0.5" value="8" data-role="threshold">
+            </div>
+            <div class="field" style="min-width: 180px;">
+              <label class="field-label">provider</label>
+              <select class="select" data-role="provider">
+                <option value="stub-image">stub-image</option>
+                <option value="gemini-image">gemini-image</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-ghost lab-single-shot" data-role="single-shot" title="run the generator once · no chain · no critic">single shot · debug</button>
+        </details>
+
+        <div class="field" style="flex: 1; min-height: 0;">
+          <label class="field-label">trace</label>
+          <div class="lab-trace" data-role="trace"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── LIVE PREVIEW (CREATE mode · STAGE mode reuses) ── -->
+    <section class="lab-col" data-shown-in="create stage">
+      <div class="lab-col-head">
+        <span class="mono-label">live preview</span>
+        <select class="select" data-role="preview-source" style="max-width: 220px;">
+          <option value="approved">approved (live)</option>
+          <option value="selected">selected generation</option>
+        </select>
+      </div>
+      <div class="lab-col-body">
+
+        <div class="lab-canvas-wrap">
+          <canvas id="labCanvas"></canvas>
+          <div class="lab-preview-empty" data-role="preview-empty" hidden>load a generation</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">tunables</label>
+          <div class="lab-tunables" data-role="tunables"></div>
+        </div>
+
+        <div class="lab-action-row">
+          <select class="select" data-role="approve-slot" style="max-width: 180px;">
+            <option>Pair.jpg</option>
+            <option>Friend.jpg</option>
+            <option>Me.jpg</option>
+            <option>Background.jpg</option>
+          </select>
+          <button class="btn btn-md btn-accent" data-role="approve" disabled>PROMOTE →</button>
+          <button class="btn btn-sm btn-secondary" data-role="snapshot">SNAPSHOT</button>
+        </div>
+
+        <div class="field">
+          <label class="field-label">snapshots</label>
+          <div class="lab-snapshots" data-role="snapshots"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── CHOREOGRAPH · IMAGE CANVAS COLUMN ── -->
+    <section class="lab-col" data-shown-in="choreograph" hidden>
+      <div class="lab-col-head">
+        <span class="mono-label">image · elements</span>
+        <div class="lab-action-row">
+          <button class="btn btn-sm btn-secondary" data-role="detect-elements">DETECT ELEMENTS</button>
+          <button class="btn btn-sm btn-ghost" data-role="add-manual-box">+ MANUAL BOX</button>
+          <button class="btn btn-sm btn-ghost" data-role="clear-elements">CLEAR</button>
+        </div>
+      </div>
+      <div class="lab-col-body">
+        <div class="lab-canvas-wrap" data-role="choreo-stage" style="aspect-ratio: 3 / 2;">
+          <img data-role="choreo-image" alt=""/>
+          <svg data-role="choreo-overlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
+          <div class="lab-preview-empty" data-role="choreo-empty">select a generation to choreograph</div>
+        </div>
+        <div class="field">
+          <label class="field-label">elements</label>
+          <ol class="lab-elements-list" data-role="elements-list"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CHOREOGRAPH · GROUPS PANEL COLUMN ── -->
+    <section class="lab-col" data-shown-in="choreograph" hidden>
+      <div class="lab-col-head">
+        <span class="mono-label">groups · reactions</span>
+        <button class="btn btn-sm btn-accent" data-role="add-group">+ ADD GROUP</button>
+      </div>
+      <div class="lab-col-body">
+        <div class="lab-groups" data-role="groups"></div>
+        <div class="lab-action-row">
+          <button class="btn btn-md btn-accent" data-role="save-graph">SAVE SCENE</button>
+          <button class="btn btn-md btn-ghost" data-role="goto-stage">→ STAGE</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── full-window drop overlay for ref uploads ── -->
+  <div class="lab-drop-overlay" data-role="drop-overlay" hidden>
+    <div class="lab-drop-card">
+      <span class="mono-label">drop refs</span>
+      <h2 class="lab-drop-title">DROP IMAGES HERE</h2>
+      <p class="lab-drop-sub">PNG · JPEG · WEBP — multiple OK · saved to <code>.lab/refs/</code></p>
+    </div>
+  </div>
+
+  <!-- ── APPROVE OVERLAY (modal, shown after chain finalist) ── -->
+  <div class="lab-overlay" data-role="approve-overlay" hidden>
+    <div class="lab-overlay-card">
+      <div class="lab-overlay-head">
+        <span class="mono-label">finalist · approve or improve</span>
+        <button class="btn btn-sm btn-secondary" data-role="approve-close" title="close · esc">CLOSE · ESC</button>
+      </div>
+      <div class="lab-overlay-body">
+        <div class="lab-overlay-img">
+          <img data-role="approve-image" alt=""/>
+        </div>
+        <div class="lab-overlay-side">
+          <div class="field">
+            <label class="field-label">scores</label>
+            <div class="lab-overlay-scores" data-role="approve-scores"></div>
+          </div>
+          <div class="field">
+            <label class="field-label">judge prediction</label>
+            <div class="lab-overlay-judge" data-role="approve-judge">—</div>
+          </div>
+          <div class="field">
+            <label class="field-label">improve · what's wrong?</label>
+            <textarea class="textarea" data-role="approve-feedback" rows="4" placeholder="e.g. 'face is too white inside · partner's hair has wrong texture · building looks generic'"></textarea>
+          </div>
+          <div class="lab-action-row">
+            <button class="btn btn-md btn-accent" data-role="approve-accept">APPROVE → CHOREOGRAPH</button>
+            <button class="btn btn-md btn-secondary" data-role="approve-improve">IMPROVE × 1 PASS</button>
+          </div>
+          <div class="lab-overlay-trace" data-role="approve-trace"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
