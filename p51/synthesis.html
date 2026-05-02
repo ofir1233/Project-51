@@ -1451,19 +1451,10 @@
   <div class="meta-strip">
     <span>P51 / SYNTHESIS</span>
     <div class="meta-strip-links">
-      <a class="lab-link" href="/p51/lab.html" data-localhost-only title="The Lab — local iteration tool">▢ LAB</a>
+      <a class="lab-link" href="https://project51-lab.onrender.com" target="_blank" rel="noopener" title="The Lab — invite-only image-to-pointcloud playground">▢ LAB</a>
       <a href="../p51-design-system">→ brand guidelines</a>
     </div>
   </div>
-
-  <script>
-    /* Hide the LAB link unless we're running on localhost.
-       The Lab is a local-only Express tool; on the deployed site it would 404. */
-    (function () {
-      var ok = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
-      if (!ok) document.querySelectorAll('[data-localhost-only]').forEach(function (el) { el.hidden = true; });
-    })();
-  </script>
 
   <main>
 
