@@ -157,8 +157,15 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
     const y = ((e.clientY - r.top)  / r.height - 0.5) * -2.0;
     targetMouse.set(x, y);
   }
+  // Resting hover level — the shader's cold colour is dim at low vLum, so we
+  // hold a partial "hot" mix even when the cursor is away. Hovering boosts it
+  // to full intensity. Trade-off: less dramatic hover reveal, but points are
+  // visible without requiring the cursor to be over them.
+  const REST_HOVER = 0.6;
   function onEnter() { mouseInside = true; targetActive = 1; targetHover = 1; }
-  function onLeave() { mouseInside = false; targetActive = 0; targetHover = 0; }
+  function onLeave() { mouseInside = false; targetActive = 0; targetHover = REST_HOVER; }
+  // Initialise resting state so the cloud is visible immediately on load.
+  targetHover = REST_HOVER;
   wrap.addEventListener('pointermove', onMove);
   wrap.addEventListener('pointerenter', onEnter);
   wrap.addEventListener('pointerleave', onLeave);

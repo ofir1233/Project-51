@@ -18,14 +18,14 @@
 
       /* Tunables read by pointcloud-grid.mjs */
       --portrait-color:        #c8ff00;
-      --portrait-color-cold:   #b8b8b8;
-      --portrait-color-dark:   #0a0a0a;
-      --portrait-point-size:   1.4;
+      --portrait-color-cold:   #c8ff00;  /* lime even at rest — visible without hover */
+      --portrait-color-dark:   #1a1a1a;
+      --portrait-point-size:   1.6;
       --portrait-depth:        0.5;
       --portrait-noise:        0.03;
       --portrait-mouse-force:  0.25;
       --portrait-parallax:     0.18;
-      --portrait-lum-cutoff:   0.92;
+      --portrait-lum-cutoff:   0.98;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--mono); font-size: 13px; overflow: hidden; }
@@ -262,7 +262,49 @@
       }
     }
 
-    // ── generate ──────────────────────────────────────────────────────────
+    // ── generate (NDJSON streamed agent chain) ────────────────────────────
+    function setStatus(text) {
+      const el = $('empty');
+      if (!text) { el.classList.add('hidden'); return; }
+      el.textContent = text;
+      el.classList.remove('hidden');
+    }
+
+    async function streamGenerate(prompt) {
+      const res = await fetch('/api/scenes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access_token,
+        },
+        body: JSON.stringify({ prompt }),
+      });
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      let scene = null;
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          let ev; try { ev = JSON.parse(line); } catch { continue; }
+          if (ev.type === 'step')     setStatus('· ' + ev.step + (ev.iteration ? '  (pass ' + ev.iteration + ')' : '') + ' ·');
+          if (ev.type === 'critique') setStatus('· score ' + ev.score.toFixed(1) + '/10  (pass ' + ev.iteration + ') ·');
+          if (ev.type === 'error')    throw new Error(ev.error + (ev.detail ? ': ' + ev.detail : ''));
+          if (ev.type === 'done')     scene = ev.scene;
+        }
+      }
+      return scene;
+    }
+
     $('promptForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const prompt = $('prompt').value.trim();
@@ -270,8 +312,11 @@
 
       $('go').disabled = true;
       $('go').textContent = 'Generating…';
+      $('empty').classList.remove('hidden');
+      setStatus('· starting ·');
       try {
-        const { scene } = await api('POST', '/scenes', { prompt });
+        const scene = await streamGenerate(prompt);
+        if (!scene) throw new Error('no scene returned');
         $('prompt').value = '';
         scenes.unshift({
           id: scene.id, prompt: scene.prompt, created_at: scene.created_at,
@@ -280,8 +325,9 @@
         activeId = scene.id;
         renderList();
         showScene(scene);
-      } catch (e) {
-        toast('Generation failed: ' + e.message, 'err');
+      } catch (err) {
+        toast('Generation failed: ' + err.message, 'err');
+        setStatus('Type a prompt below to generate your first scene.');
       } finally {
         $('go').disabled = false;
         $('go').textContent = 'Generate';

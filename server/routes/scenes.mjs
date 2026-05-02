@@ -1,44 +1,64 @@
-// /api/scenes — the only data route the online Lab needs.
+// /api/scenes — chain-driven generation with NDJSON streaming progress.
 //
-//   POST   /api/scenes          generate, sample, persist; returns the new row
-//   GET    /api/scenes          list the caller's non-expired scenes (newest first)
-//   GET    /api/scenes/:id      read one (RLS guarantees ownership)
+//   POST   /api/scenes          run the agent chain, stream progress events
+//                                as newline-delimited JSON, persist final scene
+//   GET    /api/scenes          list the caller's non-expired scenes
+//   GET    /api/scenes/:id      read one
 //   DELETE /api/scenes/:id      remove one
 //
 // All handlers run as the calling user via userSupabase(req.jwt) — RLS in
-// Postgres prevents touching anyone else's rows even if the WHERE clause
-// were missing.
+// Postgres prevents touching anyone else's rows even if WHERE is missing.
 
 import { Router } from 'express';
 import { ulid } from '../util/ids.mjs';
 import { userSupabase } from '../supabase.mjs';
-import { generateImage } from '../util/generate.mjs';
+import { runChain } from '../util/chain.mjs';
 import { sampleGridFromImage } from '../util/sample-grid.mjs';
 import { onlineConfig } from '../online-config.mjs';
 
 export const scenesRouter = Router();
 
 scenesRouter.post('/scenes', async (req, res) => {
-  const prompt = (req.body?.prompt || '').toString().trim();
-  if (!prompt) return res.status(400).json({ error: 'prompt required' });
-  if (prompt.length > 2000) return res.status(400).json({ error: 'prompt too long' });
+  const goal = (req.body?.prompt || '').toString().trim();
+  if (!goal) return res.status(400).json({ error: 'prompt required' });
+  if (goal.length > 2000) return res.status(400).json({ error: 'prompt too long' });
 
-  let bytes, mime, provider, model;
+  // NDJSON streaming response. Each line is a self-contained JSON event.
+  res.set({
+    'Content-Type': 'application/x-ndjson',
+    'Cache-Control': 'no-cache',
+    'X-Accel-Buffering': 'no', // disable proxy buffering on Render
+  });
+  const send = (obj) => { try { res.write(JSON.stringify(obj) + '\n'); } catch {} };
+  const ac = new AbortController();
+  req.on('close', () => ac.abort());
+
+  let final = null;
   try {
-    const out = await generateImage({ prompt });
-    bytes = out.bytes; mime = out.mime; provider = out.provider; model = out.model;
+    for await (const ev of runChain({ goal, abortSignal: ac.signal })) {
+      if (ev.type === 'done') { final = ev; break; }
+      send(ev);
+    }
   } catch (e) {
-    return res.status(502).json({ error: 'generation failed', detail: e.message });
+    send({ type: 'error', error: 'chain failed', detail: e.message });
+    return res.end();
+  }
+  if (!final) {
+    send({ type: 'error', error: 'chain ended without result' });
+    return res.end();
   }
 
+  // Sample to luminance grid in memory; bytes never written to disk.
   let grid;
   try {
-    grid = await sampleGridFromImage(bytes, { gridSize: onlineConfig.gridSize });
+    send({ type: 'step', step: 'sampling point cloud' });
+    grid = await sampleGridFromImage(final.bytes, { gridSize: onlineConfig.gridSize });
   } catch (e) {
-    return res.status(500).json({ error: 'sampling failed', detail: e.message });
+    send({ type: 'error', error: 'sampling failed', detail: e.message });
+    return res.end();
   }
-  // bytes goes out of scope here — never written to disk, never uploaded.
-  bytes = null;
+  // Drop bytes from memory.
+  final.bytes = null;
 
   const now = Date.now();
   const row = {
@@ -46,19 +66,25 @@ scenesRouter.post('/scenes', async (req, res) => {
     user_id:    req.user.id,
     created_at: now,
     expires_at: now + onlineConfig.sceneTtlMs,
-    prompt,
-    provider,
-    model,
+    prompt:     goal,
+    provider:   final.provider,
+    model:      final.model,
     grid_w:     grid.w,
     grid_h:     grid.h,
-    point_grid: { lum: grid.lum, srcWidth: grid.srcWidth, srcHeight: grid.srcHeight },
+    point_grid: { lum: grid.lum, srcWidth: grid.srcWidth, srcHeight: grid.srcHeight, finalPrompt: final.finalPrompt, score: final.score, iterations: final.iterations },
     notes:      null,
   };
 
+  send({ type: 'step', step: 'saving scene' });
   const sb = userSupabase(req.jwt);
   const { data, error } = await sb.from('scenes').insert(row).select().single();
-  if (error) return res.status(500).json({ error: 'db insert failed', detail: error.message });
-  res.json({ scene: data });
+  if (error) {
+    send({ type: 'error', error: 'db insert failed', detail: error.message });
+    return res.end();
+  }
+
+  send({ type: 'done', scene: data });
+  res.end();
 });
 
 scenesRouter.get('/scenes', async (req, res) => {
