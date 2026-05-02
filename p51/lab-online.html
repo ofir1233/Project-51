@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>P51 / LAB</title>
+  <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+  <style>
+    :root {
+      --bg:    #0b0b0b;
+      --fg:    #e8e8e8;
+      --dim:   rgba(232, 232, 232, 0.55);
+      --line:  rgba(232, 232, 232, 0.16);
+      --lime:  rgb(200, 255, 0);
+      --warn:  #ffaa55;
+      --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+      /* Tunables read by pointcloud-grid.mjs */
+      --portrait-color:        #c8ff00;
+      --portrait-color-cold:   #b8b8b8;
+      --portrait-color-dark:   #0a0a0a;
+      --portrait-point-size:   1.4;
+      --portrait-depth:        0.5;
+      --portrait-noise:        0.03;
+      --portrait-mouse-force:  0.25;
+      --portrait-parallax:     0.18;
+      --portrait-lum-cutoff:   0.92;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--mono); font-size: 13px; overflow: hidden; }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--line);
+      font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    }
+    .brand { color: var(--fg); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; color: var(--dim); }
+    .topbar-right button {
+      background: transparent; border: 1px solid var(--line); border-radius: 100px;
+      color: var(--dim); font-family: inherit; font-size: 9px; letter-spacing: 0.22em;
+      padding: 5px 12px; cursor: pointer; text-transform: uppercase;
+    }
+    .topbar-right button:hover { color: var(--fg); border-color: var(--fg); }
+
+    .layout { display: grid; grid-template-columns: 1fr 280px; height: calc(100vh - 51px); }
+
+    .stage { position: relative; display: grid; grid-template-rows: 1fr auto; }
+    .stage-canvas-wrap { position: relative; min-height: 0; }
+    .stage-canvas-wrap canvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
+    .empty {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      color: var(--dim); font-size: 11px; letter-spacing: 0.1em; text-align: center;
+      pointer-events: none;
+    }
+    .empty.hidden { display: none; }
+
+    .promptbar {
+      display: flex; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--line);
+    }
+    .promptbar input {
+      flex: 1; background: transparent; border: 1px solid var(--line); border-radius: 4px;
+      color: var(--fg); font-family: inherit; font-size: 13px; padding: 10px 14px; outline: none;
+    }
+    .promptbar input:focus { border-color: var(--lime); }
+    .promptbar button {
+      background: transparent; border: 1px solid rgba(200, 255, 0, 0.55); border-radius: 100px;
+      color: var(--lime); font-family: inherit; font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; padding: 0 22px; cursor: pointer; transition: all 0.15s;
+    }
+    .promptbar button:hover:not(:disabled) { background: rgba(200, 255, 0, 0.1); border-color: var(--lime); }
+    .promptbar button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .sidebar {
+      border-left: 1px solid var(--line); display: grid; grid-template-rows: auto 1fr; min-height: 0;
+    }
+    .sidebar-head {
+      padding: 14px 16px; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dim); border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sidebar-list { overflow-y: auto; padding: 6px; }
+    .scene-item {
+      padding: 10px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 4px;
+      border: 1px solid transparent; transition: background 0.1s;
+    }
+    .scene-item:hover { background: rgba(232, 232, 232, 0.04); }
+    .scene-item.active { background: rgba(200, 255, 0, 0.06); border-color: rgba(200, 255, 0, 0.25); }
+    .scene-prompt { font-size: 11px; line-height: 1.35; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .scene-meta   { font-size: 9px; letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; display: flex; justify-content: space-between; }
+    .scene-meta .expires { color: var(--dim); }
+    .scene-meta .expires.warn { color: var(--warn); }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+      background: var(--bg); border: 1px solid var(--line); border-radius: 100px;
+      padding: 8px 18px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--fg); pointer-events: none; opacity: 0; transition: opacity 0.2s;
+    }
+    .toast.show { opacity: 1; }
+    .toast.warn { border-color: var(--warn); color: var(--warn); }
+    .toast.err  { border-color: #ff7a7a; color: #ff7a7a; }
+
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; grid-template-rows: 1fr 200px; }
+      .sidebar { border-left: 0; border-top: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">P51 / LAB</span>
+    <div class="topbar-right">
+      <span id="email"></span>
+      <button id="signout">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="stage">
+      <div class="stage-canvas-wrap">
+        <canvas id="canvas"></canvas>
+        <div class="empty" id="empty">Type a prompt below to generate your first scene.</div>
+      </div>
+      <form class="promptbar" id="promptForm">
+        <input id="prompt" type="text" placeholder="describe a scene…" autocomplete="off" />
+        <button type="submit" id="go">Generate</button>
+      </form>
+    </section>
+
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <span>History</span>
+        <span id="count" style="color: var(--dim); letter-spacing: 0.15em;"></span>
+      </div>
+      <div class="sidebar-list" id="list"></div>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    import { mountPointCloudFromGrid } from '/p51/lab/pointcloud-grid.mjs';
+
+    // ── boot ──────────────────────────────────────────────────────────────
+    const cfg = await (await fetch('/api/config')).json();
+    const sb  = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    });
+
+    let { data: { session } } = await sb.auth.getSession();
+    if (!session) { location.replace('/'); throw new Error('no session'); }
+    document.getElementById('email').textContent = session.user.email || '';
+
+    sb.auth.onAuthStateChange((_e, s) => {
+      if (!s) location.replace('/');
+      else session = s;
+    });
+
+    // ── helpers ───────────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+    const toastEl = $('toast');
+    let toastTimer = null;
+    function toast(text, kind = '') {
+      toastEl.textContent = text;
+      toastEl.className = 'toast show ' + kind;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+    }
+
+    async function api(method, path, body) {
+      const res = await fetch('/api' + path, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access_token,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    }
+
+    function fmtExpiry(ms) {
+      const dt = ms - Date.now();
+      if (dt <= 0) return 'expired';
+      const h = Math.floor(dt / (60 * 60 * 1000));
+      if (h < 1) return '< 1h';
+      if (h < 24) return h + 'h';
+      const d = Math.floor(h / 24);
+      const rh = h % 24;
+      return d + 'd' + (rh ? ' ' + rh + 'h' : '');
+    }
+
+    // ── point cloud renderer ──────────────────────────────────────────────
+    let cloud = null;
+    function ensureCloud() {
+      if (cloud) return cloud;
+      cloud = mountPointCloudFromGrid($('canvas'), { grid: null });
+      return cloud;
+    }
+
+    function showScene(row) {
+      $('empty').classList.add('hidden');
+      ensureCloud().setGrid({
+        lum: row.point_grid.lum,
+        w:   row.grid_w,
+        h:   row.grid_h,
+      });
+    }
+
+    // ── history list ──────────────────────────────────────────────────────
+    let scenes = [];
+    let activeId = null;
+
+    function renderList() {
+      const list = $('list');
+      list.innerHTML = '';
+      $('count').textContent = scenes.length ? scenes.length + ' scene' + (scenes.length === 1 ? '' : 's') : '';
+      const expiringSoon = scenes.find(s => s.expires_at - Date.now() < 24 * 60 * 60 * 1000);
+      if (expiringSoon && !sessionStorage.getItem('warned_' + expiringSoon.id)) {
+        toast('Some scenes expire within 24 hours', 'warn');
+        sessionStorage.setItem('warned_' + expiringSoon.id, '1');
+      }
+      for (const s of scenes) {
+        const div = document.createElement('div');
+        div.className = 'scene-item' + (s.id === activeId ? ' active' : '');
+        const expClass = (s.expires_at - Date.now() < 24 * 60 * 60 * 1000) ? 'warn' : '';
+        div.innerHTML = `
+          <div class="scene-prompt"></div>
+          <div class="scene-meta"><span></span><span class="expires ${expClass}"></span></div>
+        `;
+        div.querySelector('.scene-prompt').textContent = s.prompt;
+        div.querySelector('.scene-meta span:first-child').textContent = new Date(s.created_at).toLocaleString();
+        div.querySelector('.expires').textContent = 'expires ' + fmtExpiry(s.expires_at);
+        div.addEventListener('click', () => loadAndShow(s.id));
+        list.appendChild(div);
+      }
+    }
+
+    async function refreshList() {
+      try {
+        const { scenes: rows } = await api('GET', '/scenes');
+        scenes = rows || [];
+        renderList();
+      } catch (e) {
+        toast('Could not load history: ' + e.message, 'err');
+      }
+    }
+
+    async function loadAndShow(id) {
+      try {
+        const { scene } = await api('GET', '/scenes/' + id);
+        activeId = id;
+        renderList();
+        showScene(scene);
+      } catch (e) {
+        toast('Could not load scene: ' + e.message, 'err');
+      }
+    }
+
+    // ── generate ──────────────────────────────────────────────────────────
+    $('promptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = $('prompt').value.trim();
+      if (!prompt) return;
+
+      $('go').disabled = true;
+      $('go').textContent = 'Generating…';
+      try {
+        const { scene } = await api('POST', '/scenes', { prompt });
+        $('prompt').value = '';
+        scenes.unshift({
+          id: scene.id, prompt: scene.prompt, created_at: scene.created_at,
+          expires_at: scene.expires_at, grid_w: scene.grid_w, grid_h: scene.grid_h,
+        });
+        activeId = scene.id;
+        renderList();
+        showScene(scene);
+      } catch (e) {
+        toast('Generation failed: ' + e.message, 'err');
+      } finally {
+        $('go').disabled = false;
+        $('go').textContent = 'Generate';
+      }
+    });
+
+    // ── sign out ──────────────────────────────────────────────────────────
+    $('signout').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      location.replace('/');
+    });
+
+    // ── go ────────────────────────────────────────────────────────────────
+    refreshList();
+    // refresh expiry labels every minute
+    setInterval(renderList, 60 * 1000);
+  </script>
+</body>
+</html>

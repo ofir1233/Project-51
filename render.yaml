@@ -1,0 +1,42 @@
+# Render deploy config for the online Lab.
+#
+# To deploy:
+#   1. Push this repo to GitHub.
+#   2. On render.com → New + → Blueprint → connect this repo.
+#   3. Render reads this file and creates the service.
+#   4. Fill in the four secret env vars in the dashboard:
+#        SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY
+#   5. Deploy. Render assigns a free *.onrender.com URL.
+#
+# Free tier behavior: the instance sleeps after 15 minutes of inactivity
+# and cold-starts (~30s) on the next request. Fine for invite-only beta.
+
+services:
+  - type: web
+    name: project51-lab
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: HOST
+        value: 0.0.0.0
+      - key: SCENE_TTL_MS
+        value: 259200000
+      - key: GRID_SIZE
+        value: 200
+      - key: ALLOWED_ORIGINS
+        value: ""
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

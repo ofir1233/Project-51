@@ -1,13 +1,19 @@
-# ── Lab (local-only Node Express + agent SaaS WIP) ──
-# Vercel doesn't run long-lived servers; the Lab cannot deploy here.
-# Even when these files are committed to git for archival, exclude
-# them from the production upload so they're not publicly served.
+# ── Lab (Node Express — local + Render-hosted online version) ──
+# Vercel doesn't run long-lived servers; the Lab deploys to Render instead.
+# Exclude all Lab-related files so the public Vercel build only ships the
+# static portfolio site.
 server/
 p51/lab.html
+p51/lab-online.html
+p51/login.html
 p51/lab/
+supabase/
 package.json
 package-lock.json
 node_modules/
+.env
+.env.example
+render.yaml
 
 # ── Local data / secrets ──
 .lab/

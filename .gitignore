@@ -21,3 +21,7 @@ npm-debug.log*
 
 # Lab — local-only iteration tool (DB, generations, snapshots, secrets)
 .lab/
+
+# Online server — env files (Render injects vars from the dashboard)
+.env
+.env.local

@@ -5,13 +5,16 @@
   "type": "module",
   "description": "Project 51 portfolio site + local-only Lab iteration tool",
   "scripts": {
-    "start": "node server/index.mjs",
+    "start": "node server/online.mjs",
+    "start:local": "node server/index.mjs",
     "dev": "node --watch server/index.mjs",
+    "dev:online": "node --watch server/online.mjs",
     "migrate": "node server/migrate.mjs",
     "lab": "node server/index.mjs --open-lab"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
+    "@supabase/supabase-js": "^2.45.0",
     "better-sqlite3": "^11.5.0",
     "dotenv": "^16.4.0",
     "express": "^4.21.0",

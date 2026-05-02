@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P51 / LAB — sign in</title>
+  <style>
+    :root {
+      --bg:    #0b0b0b;
+      --fg:    #e8e8e8;
+      --dim:   rgba(232, 232, 232, 0.55);
+      --line:  rgba(232, 232, 232, 0.16);
+      --lime:  rgb(200, 255, 0);
+      --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: var(--mono); font-size: 13px; }
+    body { display: grid; place-items: center; }
+    main { width: min(420px, 90vw); padding: 32px; border: 1px solid var(--line); border-radius: 8px; }
+    .brand { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); margin-bottom: 24px; }
+    h1 { font-size: 17px; font-weight: 500; margin: 0 0 6px; letter-spacing: 0.02em; }
+    .sub { color: var(--dim); margin: 0 0 28px; font-size: 11px; line-height: 1.5; }
+    label { display: block; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+    input[type=email] {
+      width: 100%; background: transparent; border: 1px solid var(--line); border-radius: 4px;
+      color: var(--fg); font-family: inherit; font-size: 13px; padding: 10px 12px; outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type=email]:focus { border-color: var(--lime); }
+    button {
+      margin-top: 16px; width: 100%; padding: 11px; background: transparent;
+      border: 1px solid rgba(200, 255, 0, 0.55); border-radius: 100px;
+      color: var(--lime); font-family: inherit; font-size: 9px; letter-spacing: 0.22em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    button:hover:not(:disabled) { background: rgba(200, 255, 0, 0.1); border-color: var(--lime); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .msg { margin-top: 18px; min-height: 18px; font-size: 11px; line-height: 1.45; color: var(--dim); }
+    .msg.ok    { color: var(--lime); }
+    .msg.err   { color: #ff7a7a; }
+    .foot { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 10px; color: var(--dim); line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">P51 / LAB</div>
+    <h1>Sign in</h1>
+    <p class="sub">Invite-only. We'll email you a one-time link.</p>
+
+    <form id="form" novalidate>
+      <label for="email">Email</label>
+      <input id="email" type="email" required autocomplete="email" placeholder="you@domain.com" />
+      <button id="submit" type="submit">Send magic link</button>
+      <div class="msg" id="msg"></div>
+    </form>
+
+    <div class="foot">
+      Generated scenes are kept for 3 days, then deleted. Source images are never stored.
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const cfgRes = await fetch('/api/config');
+    const cfg    = await cfgRes.json();
+    const sb     = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+    });
+
+    // If we landed here with a session already (e.g. magic link callback), go straight in.
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) location.replace('/lab');
+
+    const $form   = document.getElementById('form');
+    const $email  = document.getElementById('email');
+    const $submit = document.getElementById('submit');
+    const $msg    = document.getElementById('msg');
+
+    function say(text, kind = '') {
+      $msg.textContent = text;
+      $msg.className = 'msg ' + kind;
+    }
+
+    $form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = $email.value.trim();
+      if (!email) return;
+
+      $submit.disabled = true;
+      say('Sending…');
+
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: location.origin + '/lab',
+          shouldCreateUser: false, // invite-only: user must already exist in Supabase Auth
+        },
+      });
+
+      $submit.disabled = false;
+
+      if (error) {
+        // Supabase returns generic errors here even when user is not invited;
+        // show the real message but soften the wording.
+        say(error.message.includes('not allowed') || error.message.includes('Signups')
+            ? 'This email is not on the invite list.'
+            : 'Could not send link: ' + error.message,
+            'err');
+        return;
+      }
+      say('Check your inbox. The link signs you in directly.', 'ok');
+    });
+  </script>
+</body>
+</html>
