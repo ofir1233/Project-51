@@ -18,8 +18,8 @@ import { generateImage } from './generate.mjs';
 
 export async function* runChain({
   goal,
-  maxIterations = 3,
-  scoreThreshold = 7,
+  maxIterations = 2,
+  scoreThreshold = 6.5,
   abortSignal,
 }) {
   let prompt = null;

@@ -18,40 +18,31 @@
 
 import { resolveProvider } from './providers/index.mjs';
 
-const WRITER_SYSTEM = `You write image-generation prompts for a Three.js point-cloud renderer.
+// Writer formula (one-shot, must work first try most of the time):
+//   <subject>, <action/pose>, <dramatic lighting cue>, <dark/colored backdrop>,
+//   <texture/detail cue>, <art-style cue>, cinematic, photorealistic, ultra-detailed
+// Hard rule: NEVER white background (renderer culls bright pixels).
+const WRITER_SYSTEM = `You write image-gen prompts for a point-cloud renderer that culls pixels brighter than ~98% luminance. Your job: write ONE image prompt that yields a photorealistic, high-contrast, dramatically-lit image whose subject fills the frame against a dark or richly-colored backdrop — never white.
 
-CRITICAL: the renderer treats bright (>~92% luminance) pixels as background and SKIPS them. Pure-white backgrounds, blown-out highlights, or flat light scenes produce empty point clouds. Prompts must yield images with:
-- Strong contrast and rich mid-to-dark tones
-- Cinematic, directional lighting (chiaroscuro, low-key)
-- Textured / detailed compositions (rough surfaces, fabric, fur, foliage)
-- NO white background — instead use deep colored backgrounds, shadow, or environmental context
-- Single clear subject taking up most of the frame, dramatic silhouette
+Formula: "<subject doing X>, <directional lighting cue e.g. rim light / chiaroscuro / golden hour>, <deep colored backdrop e.g. dark teal void / charcoal stone wall / midnight forest>, <texture/detail cue>, cinematic, photorealistic, ultra-detailed, 8K".
 
-Output STRICT JSON, nothing else:
-{ "prompt": "<the rich image prompt>", "negative": "<what to avoid, or null>" }`;
+Keep the prompt under 60 words. Single sentence preferred.
 
-const REFINER_SYSTEM = `You revise image-generation prompts based on a critic's feedback.
-Same constraints as the writer (point-cloud renderer needs dark/contrasty images, no white backgrounds, cinematic lighting).
-Address the critic's gaps directly. Output STRICT JSON: { "prompt": "<revised prompt>", "negative": "<...or null>" }`;
+Output STRICT JSON only: {"prompt":"...","negative":"blurry, watermark, white background, flat lighting"}`;
 
-const CRITIC_SYSTEM = `You are a vision critic for a point-cloud image generator.
+const REFINER_SYSTEM = `Revise the previous image-gen prompt to address the critic's gaps. Same hard rules as the writer (no white background, dramatic lighting, dark/colored backdrop, under 60 words). Output STRICT JSON: {"prompt":"...","negative":"..."}`;
 
-Score the produced image 1-10 on three axes:
-- relevance       : how well the image matches the user's goal
-- pointcloud_fit  : how visible it will be when rendered as a point cloud (the renderer keeps only non-bright pixels — score LOW if the image is mostly white/bright/flat, HIGH if it has rich darks, contrast, and textured detail)
-- visual_interest : composition, lighting, detail, drama
+const CRITIC_SYSTEM = `Score the attached image as a point-cloud source. The renderer culls pixels >98% luminance, so flat/bright images render poorly.
 
-Overall score = mean of the three.
+Calibration:
+  9-10 = great (relevant, lots of dark/mid tones, dramatic light)
+  7-8  = good (clearly relevant, enough darks to render, decent composition) — DEFAULT for any reasonable result
+  5-6  = mediocre (drifted from goal, OR mostly bright, OR flat lighting)
+  1-4  = bad (off-topic OR almost all white/blown-out)
 
-Output STRICT JSON only:
-{
-  "score": <0-10>,
-  "axes": { "relevance": n, "pointcloud_fit": n, "visual_interest": n },
-  "gaps": [ "<short, actionable thing to fix>", ... ],
-  "notes": "<one-line summary>"
-}
+Be calibrated, not harsh — most decent images should score 7+. Only score below 7 if there's a real issue.
 
-Be honest. Mostly-white image → pointcloud_fit ≤ 3. Off-topic → relevance ≤ 4.`;
+Output STRICT JSON: {"score":<0-10>,"axes":{"relevance":n,"pointcloud_fit":n,"visual_interest":n},"gaps":["one-line fix",...],"notes":"<one line>"}`;
 
 function extractJson(s) {
   const m = s.match(/\{[\s\S]*\}/);
