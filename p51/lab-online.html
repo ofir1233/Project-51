@@ -508,8 +508,8 @@
       const html =
 `<!-- P51 Lab point-cloud embed · ${scene.prompt.replace(/-->/g,'-- >')} -->
 <canvas id="p51cloud" style="width:600px;height:400px;display:block;background:#0b0b0b"></canvas>
-<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
-<script type="module">
+<scr` + `ipt src="https://unpkg.com/three@0.149.0/build/three.min.js"><\/scr` + `ipt>
+<scr` + `ipt type="module">
   import { mountPointCloudFromGrid } from 'https://project51-lab.onrender.com/p51/lab/pointcloud-grid.mjs';
   const grid = ${JSON.stringify(grid)};
   const cloud = mountPointCloudFromGrid(document.getElementById('p51cloud'), { grid });
@@ -519,7 +519,7 @@
   cloud.setDepth(${$('ctlDepth').value});
   cloud.setNoise(${$('ctlNoise').value});
   cloud.setMouseForce(${$('ctlMouse').value});
-<\/script>`;
+<\/scr` + `ipt>`;
       copyText(html, 'Embed HTML');
     });
 
