@@ -20,7 +20,8 @@ const VERT = `
   uniform float uNoise;
   uniform float uMouseForce;
   uniform float uPixelRatio;
-  uniform float uEdgeFade;        // 0 = no fade, up to ~0.5 = fade over outer 50% of canvas
+  uniform float uEdgeFade;        // 0 = no fade, up to ~0.5 = fade over outer 50% of cloud
+  uniform float uCloudAspect;     // cloud's intrinsic w/h ratio — used for symmetric edge fade
   attribute float aLum;
   varying float vLum;
   varying float vEdgeAlpha;
@@ -50,15 +51,19 @@ const VERT = `
     float sizeBoost = 1.0 + aLum * 0.7 + uHover * 0.4;
     gl_PointSize = uPointSize * uPixelRatio * sizeBoost * (1.6 / -mvPos.z);
 
-    // Edge fade — STOCHASTIC dropout, not a uniform alpha gradient.
-    // Each particle gets a stable seed in [0,1) from its world position. The
-    // closer a particle is to a viewport edge, the lower its "visibility
-    // probability" gets. We then test seed < probability — pass = full alpha,
-    // fail = invisible. As you approach the edge, more particles fail the
-    // test individually, producing a dissolve / scatter look that can't be
-    // confused with a CSS overlay. The kept particles stay full opacity.
-    vec2 ndc = gl_Position.xy / max(gl_Position.w, 0.0001);
-    float edgeDist = min(1.0 - abs(ndc.x), 1.0 - abs(ndc.y));
+    // Edge fade — STOCHASTIC dropout, computed against the CLOUD's own
+    // bounding box (not the viewport). The cloud spans
+    //   x ∈ [-uCloudAspect, +uCloudAspect],  y ∈ [-1, +1]
+    // so normalising by those gives a coordinate in [-1, 1]² where each
+    // axis-edge is at ±1. edgeDist = 1 − max(|nx|, |ny|) is then 0 at any
+    // of the cloud's four edges and 1 at the centre.
+    // Each particle gets a stable per-position seed and tests
+    //   step(seed, smoothstep(0, uEdgeFade, edgeDist))
+    // — pass = full alpha, fail = invisible. Particles individually drop
+    // out toward all four cloud edges, producing a dissolve / scatter that
+    // can't be mistaken for a CSS overlay.
+    vec2 norm = position.xy / vec2(max(uCloudAspect, 0.0001), 1.0);
+    float edgeDist = 1.0 - max(abs(norm.x), abs(norm.y));
     float pSeed = fract(sin(dot(position.xy, vec2(12.9898, 78.233))) * 43758.5453);
     float vis   = smoothstep(0.0, uEdgeFade, edgeDist);
     vEdgeAlpha  = uEdgeFade > 0.0 ? step(pSeed, vis) : 1.0;
@@ -118,6 +123,7 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
     uMouseForce:    { value: readNum('--portrait-mouse-force',  0.22) },
     uPixelRatio:    { value: renderer.getPixelRatio() },
     uEdgeFade:      { value: 0 },
+    uCloudAspect:   { value: 1 },
   };
 
   const mat = new THREE.ShaderMaterial({
@@ -134,6 +140,9 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
     const { lum, w, h } = grid;
     const lumCutoff = opts.cutoff ?? readNum('--portrait-lum-cutoff', 0.85);
     const aspect = w / h;
+    // Tell the shader the cloud's intrinsic aspect so the edge-fade is
+    // computed against the cloud's own bounding box, not the viewport.
+    uniforms.uCloudAspect.value = aspect;
     const positions = [];
     const lums = [];
     for (let y = 0; y < h; y++) {
