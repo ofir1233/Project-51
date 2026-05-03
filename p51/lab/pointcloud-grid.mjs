@@ -50,13 +50,18 @@ const VERT = `
     float sizeBoost = 1.0 + aLum * 0.7 + uHover * 0.4;
     gl_PointSize = uPointSize * uPixelRatio * sizeBoost * (1.6 / -mvPos.z);
 
-    // Edge fade — distance from this point to the nearest viewport edge in
-    // normalised device coordinates (NDC is in [-1, 1], so each axis distance
-    // to its edge is 1 - |coord|). Use the nearer of the two axes so the
-    // fade is symmetric on all four sides.
+    // Edge fade — STOCHASTIC dropout, not a uniform alpha gradient.
+    // Each particle gets a stable seed in [0,1) from its world position. The
+    // closer a particle is to a viewport edge, the lower its "visibility
+    // probability" gets. We then test seed < probability — pass = full alpha,
+    // fail = invisible. As you approach the edge, more particles fail the
+    // test individually, producing a dissolve / scatter look that can't be
+    // confused with a CSS overlay. The kept particles stay full opacity.
     vec2 ndc = gl_Position.xy / max(gl_Position.w, 0.0001);
     float edgeDist = min(1.0 - abs(ndc.x), 1.0 - abs(ndc.y));
-    vEdgeAlpha = uEdgeFade > 0.0 ? smoothstep(0.0, uEdgeFade, edgeDist) : 1.0;
+    float pSeed = fract(sin(dot(position.xy, vec2(12.9898, 78.233))) * 43758.5453);
+    float vis   = smoothstep(0.0, uEdgeFade, edgeDist);
+    vEdgeAlpha  = uEdgeFade > 0.0 ? step(pSeed, vis) : 1.0;
   }
 `;
 const FRAG = `
