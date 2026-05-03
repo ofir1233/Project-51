@@ -2337,20 +2337,16 @@
           renderer.setSize(r.width, r.height, false);
           camera.aspect = r.width / r.height;
           camera.updateProjectionMatrix();
-          // Cloud geometry is in [-1.09 * sourceAspectClamped, +...] for x and
-          // [-... / sourceAspect, +...] for y. To make the cloud fill the
-          // visible camera frustum, scale x and y so the cloud's bounding box
-          // fills the visible plane at z = 0.
+          // Make the cloud fill the canvas like CSS object-fit: cover —
+          // uniform scale (no distortion), zoom in so the smaller dimension
+          // exactly covers and the larger dimension overflows + gets clipped
+          // by the wrap's overflow: hidden.
           const visibleH = 2 * camera.position.z * Math.tan((camera.fov * Math.PI / 180) / 2);
           const visibleW = visibleH * camera.aspect;
-          // The cloud's intrinsic half-extents at unit scale (see sampling code):
-          //   halfW = 1.09 * min(1, sourceAspect)
-          //   halfH = 1.09 * min(1, sourceAspect) / sourceAspect
           const halfW = 1.09 * Math.min(1, sourceAspect);
           const halfH = halfW / sourceAspect;
-          // 0.99 = a tiny margin so points right at the edge don't disappear
-          // when the smoothed point sprite is partially clipped.
-          points.scale.set((visibleW * 0.99) / (2 * halfW), (visibleH * 0.99) / (2 * halfH), 1);
+          const coverScale = Math.max(visibleW / (2 * halfW), visibleH / (2 * halfH));
+          points.scale.set(coverScale, coverScale, 1);
         }
         resize();
         const ro = new ResizeObserver(resize);
