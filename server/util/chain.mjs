@@ -27,16 +27,15 @@ export async function* runChain({
   let lastImage = null;
   let lastCritique = null;
   let best = null; // { bytes, mime, prompt, score, iteration }
-  const hasRef = refBytes.length > 0;
 
   for (let i = 1; i <= maxIterations; i++) {
     yield { type: 'step', step: i === 1 ? 'writing prompt' : `refining prompt (iteration ${i})`, iteration: i };
 
     if (i === 1) {
-      const r = await writePrompt({ goal, hasRef, abortSignal });
+      const r = await writePrompt({ goal, refBytes, abortSignal });
       prompt = r.prompt;
     } else {
-      const r = await refinePrompt({ goal, previousPrompt: prompt, gaps: lastCritique.gaps, hasRef, abortSignal });
+      const r = await refinePrompt({ goal, previousPrompt: prompt, gaps: lastCritique.gaps, refBytes, abortSignal });
       prompt = r.prompt;
     }
     yield { type: 'prompt', prompt, iteration: i };
