@@ -6,10 +6,10 @@
 
 import { resolveProvider } from '../providers/index.mjs';
 
-export async function generateImage({ prompt, providerName = 'gemini-image', abortSignal } = {}) {
+export async function generateImage({ prompt, refBytes = [], providerName = 'gemini-image', abortSignal } = {}) {
   if (!prompt || typeof prompt !== 'string') throw new Error('prompt required');
   const provider = resolveProvider({ kind: 'image', name: providerName });
-  const out = await provider.generate({ prompt, refs: [], abortSignal });
+  const out = await provider.generate({ prompt, refs: refBytes, abortSignal });
   return {
     bytes:    out.bytes,
     mime:     out.mime,

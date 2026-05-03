@@ -17,7 +17,10 @@ export const geminiImage = config.geminiApiKey ? {
 
     const parts = [{ text: prompt }];
     for (const r of refs) {
-      const buf = await loadRefBytes(r);
+      // Accept either raw Buffers (online flow, ref image uploaded by user)
+      // or string IDs ('live:...', 'ref:...') that map to local files
+      // (local Lab flow). Anything else is silently skipped.
+      const buf = Buffer.isBuffer(r) ? r : await loadRefBytes(r);
       if (!buf) continue;
       parts.push({ inlineData: { mimeType: detectMime(buf), data: buf.toString('base64') } });
     }

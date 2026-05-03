@@ -23,6 +23,21 @@ scenesRouter.post('/scenes', async (req, res) => {
   if (!goal) return res.status(400).json({ error: 'prompt required' });
   if (goal.length > 2000) return res.status(400).json({ error: 'prompt too long' });
 
+  // Optional reference image — base64-encoded in the body. Decoded into a
+  // single Buffer that's passed to gemini-image as an image-to-image ref.
+  // Bytes never persist; they exist only for the duration of this request.
+  let refBytes = [];
+  if (req.body?.refImage && typeof req.body.refImage === 'string') {
+    try {
+      const b64 = req.body.refImage.replace(/^data:[^;]+;base64,/, '');
+      const buf = Buffer.from(b64, 'base64');
+      if (buf.length > 6 * 1024 * 1024) return res.status(413).json({ error: 'ref image too large (max 6MB)' });
+      if (buf.length > 0) refBytes = [buf];
+    } catch {
+      return res.status(400).json({ error: 'ref image not valid base64' });
+    }
+  }
+
   // NDJSON streaming response. Each line is a self-contained JSON event.
   res.set({
     'Content-Type': 'application/x-ndjson',
@@ -35,7 +50,7 @@ scenesRouter.post('/scenes', async (req, res) => {
 
   let final = null;
   try {
-    for await (const ev of runChain({ goal, abortSignal: ac.signal })) {
+    for await (const ev of runChain({ goal, refBytes, abortSignal: ac.signal })) {
       if (ev.type === 'done') { final = ev; break; }
       send(ev);
     }

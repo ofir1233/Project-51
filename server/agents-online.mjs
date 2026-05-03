@@ -58,9 +58,11 @@ async function callText({ system, user, attachments, providerName = 'gemini-text
   return { parsed, tokens: r.tokens };
 }
 
-export async function writePrompt({ goal, abortSignal }) {
+const REF_NOTE = `\n\nA reference image is attached to the image generator (image-to-image mode). The prompt should describe the desired transformation/scene while preserving the reference's identity and composition. Use phrases like "preserve subject identity", "in the same pose", or "keep the existing composition" as appropriate.`;
+
+export async function writePrompt({ goal, hasRef = false, abortSignal }) {
   const { parsed, tokens } = await callText({
-    system: WRITER_SYSTEM,
+    system: WRITER_SYSTEM + (hasRef ? REF_NOTE : ''),
     user: `Goal: ${goal}\n\nReturn JSON.`,
     abortSignal,
   });
@@ -71,10 +73,10 @@ export async function writePrompt({ goal, abortSignal }) {
   };
 }
 
-export async function refinePrompt({ goal, previousPrompt, gaps, abortSignal }) {
+export async function refinePrompt({ goal, previousPrompt, gaps, hasRef = false, abortSignal }) {
   const gapStr = (gaps || []).map(g => '- ' + g).join('\n') || '- (no specific gaps)';
   const { parsed, tokens } = await callText({
-    system: REFINER_SYSTEM,
+    system: REFINER_SYSTEM + (hasRef ? REF_NOTE : ''),
     user: `Goal: ${goal}\n\nPrevious prompt:\n${previousPrompt}\n\nCritic gaps:\n${gapStr}\n\nReturn JSON.`,
     abortSignal,
   });

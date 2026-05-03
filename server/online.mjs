@@ -18,7 +18,7 @@ const ROOT      = join(__dirname, '..');
 const P51_DIR   = join(ROOT, 'p51');
 
 const app = express();
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '8mb' })); // ref images come in as base64 in the JSON body
 
 // CORS — only allow configured origins (or same-origin if list is empty).
 app.use((req, res, next) => {

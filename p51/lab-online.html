@@ -57,19 +57,44 @@
     .empty.hidden { display: none; }
 
     .promptbar {
-      display: flex; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--line);
+      display: flex; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--line); align-items: center;
     }
-    .promptbar input {
+    .promptbar input[type=text] {
       flex: 1; background: transparent; border: 1px solid var(--line); border-radius: 4px;
       color: var(--fg); font-family: inherit; font-size: 13px; padding: 10px 14px; outline: none;
     }
-    .promptbar input:focus { border-color: var(--lime); }
+    .promptbar input[type=text]:focus { border-color: var(--lime); }
     .promptbar button {
       background: transparent; border: 1px solid rgba(200, 255, 0, 0.55); border-radius: 100px;
       color: var(--lime); font-family: inherit; font-size: 9px; letter-spacing: 0.22em;
       text-transform: uppercase; padding: 0 22px; cursor: pointer; transition: all 0.15s;
     }
     .promptbar button:hover:not(:disabled) { background: rgba(200, 255, 0, 0.1); border-color: var(--lime); }
+
+    /* Reference-image picker */
+    .ref-pick {
+      width: 38px; height: 38px; border-radius: 4px;
+      border: 1px dashed var(--line); background: transparent;
+      color: var(--dim); cursor: pointer; padding: 0; flex: 0 0 38px;
+      display: grid; place-items: center; transition: all 0.15s;
+      font-size: 18px; font-family: inherit;
+    }
+    .ref-pick:hover { border-color: var(--lime); color: var(--lime); }
+    .ref-thumb-wrap {
+      position: relative; flex: 0 0 38px; width: 38px; height: 38px;
+    }
+    .ref-thumb {
+      width: 38px; height: 38px; border-radius: 4px; object-fit: cover;
+      border: 1px solid rgba(200, 255, 0, 0.55); display: block;
+    }
+    .ref-thumb-clear {
+      position: absolute; top: -6px; right: -6px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--bg); border: 1px solid var(--line);
+      color: var(--fg); cursor: pointer; padding: 0;
+      font-size: 10px; line-height: 1; display: grid; place-items: center;
+    }
+    .ref-thumb-clear:hover { color: #ff7a7a; border-color: #ff7a7a; }
     .promptbar button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .sidebar {
@@ -134,6 +159,12 @@
         <div class="empty" id="empty">Type a prompt below to generate your first scene.</div>
       </div>
       <form class="promptbar" id="promptForm">
+        <button type="button" class="ref-pick" id="refPick" title="Attach a reference image (image-to-image)" aria-label="Attach reference image">+</button>
+        <span class="ref-thumb-wrap" id="refThumbWrap" hidden>
+          <img class="ref-thumb" id="refThumb" alt="reference" />
+          <button type="button" class="ref-thumb-clear" id="refClear" title="Remove reference" aria-label="Remove reference">×</button>
+        </span>
+        <input id="refFile" type="file" accept="image/png,image/jpeg,image/webp" hidden />
         <input id="prompt" type="text" placeholder="describe a scene…" autocomplete="off" />
         <button type="submit" id="go">Generate</button>
       </form>
@@ -297,14 +328,14 @@
       el.classList.remove('hidden');
     }
 
-    async function streamGenerate(prompt) {
+    async function streamGenerate(prompt, refImageB64) {
       const res = await fetch('/api/scenes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + session.access_token,
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, refImage: refImageB64 || undefined }),
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
@@ -332,6 +363,30 @@
       return scene;
     }
 
+    // ── reference image picker ────────────────────────────────────────────
+    let refImageB64 = null; // includes data: prefix; server strips it
+    function clearRef() {
+      refImageB64 = null;
+      $('refFile').value = '';
+      $('refThumbWrap').hidden = true;
+      $('refPick').hidden = false;
+    }
+    $('refPick').addEventListener('click', () => $('refFile').click());
+    $('refClear').addEventListener('click', clearRef);
+    $('refFile').addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      if (f.size > 6 * 1024 * 1024) { toast('Image too large (max 6MB)', 'err'); $('refFile').value = ''; return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        refImageB64 = reader.result; // data:image/png;base64,...
+        $('refThumb').src = refImageB64;
+        $('refThumbWrap').hidden = false;
+        $('refPick').hidden = true;
+      };
+      reader.readAsDataURL(f);
+    });
+
     $('promptForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const prompt = $('prompt').value.trim();
@@ -342,9 +397,10 @@
       $('empty').classList.remove('hidden');
       setStatus('· starting ·');
       try {
-        const scene = await streamGenerate(prompt);
+        const scene = await streamGenerate(prompt, refImageB64);
         if (!scene) throw new Error('no scene returned');
         $('prompt').value = '';
+        clearRef();
         scenes.unshift({
           id: scene.id, prompt: scene.prompt, created_at: scene.created_at,
           expires_at: scene.expires_at, grid_w: scene.grid_w, grid_h: scene.grid_h,
