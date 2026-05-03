@@ -419,27 +419,23 @@
       document.documentElement.style.setProperty('--portrait-parallax', e.target.value);
     });
 
-    // Faded edges — apply a feathered mask to the canvas wrap.
-    // value=0 → no mask; value=100 → ~18% feather on each side (matches the
-    // discipline-portrait look on the portfolio).
+    // Faded edges — baked into the shader so each particle's opacity drops
+    // smoothly to 0 as it approaches any of the 4 viewport edges. Slider
+    // value 0..100 maps to a 0..0.5 NDC depth, where 0.5 means the fade
+    // reaches halfway into the canvas from each edge.
     function applyFade(value) {
-      const wrap = document.querySelector('.stage-canvas-wrap');
       const v = Number(value);
-      if (!wrap) return;
-      if (v <= 0) {
+      const ndc = Math.max(0, Math.min(0.5, (v / 100) * 0.5));
+      if (cloud) cloud.setEdgeFade(ndc);
+      // Defensive: clear any old CSS mask we may have set in a previous
+      // version of this code.
+      const wrap = document.querySelector('.stage-canvas-wrap');
+      if (wrap) {
         wrap.style.maskImage = '';
         wrap.style.webkitMaskImage = '';
         wrap.style.maskComposite = '';
         wrap.style.webkitMaskComposite = '';
-        return;
       }
-      const pct = (v / 100) * 18;        // up to 18% on each edge
-      const inner = (100 - pct).toFixed(1);
-      const grad = `linear-gradient(to right, transparent 0%, #000 ${pct.toFixed(1)}%, #000 ${inner}%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 ${pct.toFixed(1)}%, #000 ${inner}%, transparent 100%)`;
-      wrap.style.maskImage = grad;
-      wrap.style.webkitMaskImage = grad;
-      wrap.style.maskComposite = 'intersect';
-      wrap.style.webkitMaskComposite = 'source-in';
     }
     $('ctlFade').addEventListener('input', (e) => {
       $('ctlFadeOut').textContent = Number(e.target.value).toFixed(0);
@@ -519,6 +515,7 @@
   cloud.setDepth(${$('ctlDepth').value});
   cloud.setNoise(${$('ctlNoise').value});
   cloud.setMouseForce(${$('ctlMouse').value});
+  cloud.setEdgeFade(${(Number($('ctlFade').value) / 100 * 0.5).toFixed(3)});
 <\/scr` + `ipt>`;
       copyText(html, 'Embed HTML');
     });

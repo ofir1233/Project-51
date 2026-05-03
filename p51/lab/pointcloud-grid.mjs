@@ -20,8 +20,10 @@ const VERT = `
   uniform float uNoise;
   uniform float uMouseForce;
   uniform float uPixelRatio;
+  uniform float uEdgeFade;        // 0 = no fade, up to ~0.5 = fade over outer 50% of canvas
   attribute float aLum;
   varying float vLum;
+  varying float vEdgeAlpha;
 
   void main() {
     vLum = aLum;
@@ -47,6 +49,14 @@ const VERT = `
     gl_Position = projectionMatrix * mvPos;
     float sizeBoost = 1.0 + aLum * 0.7 + uHover * 0.4;
     gl_PointSize = uPointSize * uPixelRatio * sizeBoost * (1.6 / -mvPos.z);
+
+    // Edge fade — distance from this point to the nearest viewport edge in
+    // normalised device coordinates (NDC is in [-1, 1], so each axis distance
+    // to its edge is 1 - |coord|). Use the nearer of the two axes so the
+    // fade is symmetric on all four sides.
+    vec2 ndc = gl_Position.xy / max(gl_Position.w, 0.0001);
+    float edgeDist = min(1.0 - abs(ndc.x), 1.0 - abs(ndc.y));
+    vEdgeAlpha = uEdgeFade > 0.0 ? smoothstep(0.0, uEdgeFade, edgeDist) : 1.0;
   }
 `;
 const FRAG = `
@@ -55,6 +65,7 @@ const FRAG = `
   uniform vec3  uColorDark;
   uniform float uHover;
   varying float vLum;
+  varying float vEdgeAlpha;
   void main() {
     vec2 c = gl_PointCoord - 0.5;
     float r = length(c);
@@ -64,7 +75,7 @@ const FRAG = `
     vec3 hot  = mix(uColorDark, uColor, smoothstep(0.05, 0.95, vLum));
     hot += pow(vLum, 4.0) * uColor * 0.4;
     vec3 col = mix(cold, hot, uHover);
-    gl_FragColor = vec4(col, alpha);
+    gl_FragColor = vec4(col, alpha * vEdgeAlpha);
   }
 `;
 
@@ -101,6 +112,7 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
     uNoise:         { value: readNum('--portrait-noise',        0.028) },
     uMouseForce:    { value: readNum('--portrait-mouse-force',  0.22) },
     uPixelRatio:    { value: renderer.getPixelRatio() },
+    uEdgeFade:      { value: 0 },
   };
 
   const mat = new THREE.ShaderMaterial({
@@ -220,6 +232,10 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
     },
     setMouseForce(n) {
       uniforms.uMouseForce.value = Math.max(0, Number(n) || 0);
+    },
+    setEdgeFade(n) {
+      // n in [0, ~0.5] — 0 disables fade, 0.5 fades the outer half of the canvas.
+      uniforms.uEdgeFade.value = Math.max(0, Math.min(0.99, Number(n) || 0));
     },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
