@@ -161,6 +161,15 @@
     .advanced-toggle.open .chev { transform: rotate(90deg); }
     .advanced-group { display: none; padding-top: 8px; }
     .advanced-group.open { display: block; }
+
+    .reset-btn {
+      width: 100%; margin-top: 12px; padding: 8px 0;
+      background: transparent; border: 0; border-top: 1px solid var(--line);
+      color: var(--dim); font-family: inherit; font-size: 9px;
+      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .reset-btn:hover { color: #ff7a7a; }
     .scene-item {
       position: relative;
       padding: 10px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 4px;
@@ -266,6 +275,7 @@
             <input type="range" id="ctlParallax" min="0.00" max="0.60" step="0.01" value="0.18" />
           </div>
         </div>
+        <button type="button" class="reset-btn" id="ctlReset">↺ Reset to defaults</button>
       </div>
       <div class="sidebar-head">
         <span>History</span>
@@ -384,6 +394,25 @@
       $('ctlParallaxOut').textContent = Number(e.target.value).toFixed(2);
       // Parallax is read each frame from this CSS var by the renderer.
       document.documentElement.style.setProperty('--portrait-parallax', e.target.value);
+    });
+
+    // Reset all controls to their defaults
+    const CONTROL_DEFAULTS = {
+      ctlColor:    '#c8ff00',
+      ctlSize:     '1.6',
+      ctlDensity:  '0.98',
+      ctlDepth:    '0.50',
+      ctlNoise:    '0.030',
+      ctlMouse:    '0.25',
+      ctlParallax: '0.18',
+    };
+    $('ctlReset').addEventListener('click', () => {
+      for (const [id, val] of Object.entries(CONTROL_DEFAULTS)) {
+        const el = $(id);
+        el.value = val;
+        // Trigger handlers so the renderer + labels update
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
     });
 
     function showScene(row) {
