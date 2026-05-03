@@ -793,6 +793,14 @@
       padding-top: 0;
       padding-bottom: 0;
       min-height: 1150px;
+      /* Override the global portrait tunables so this section's cloud
+         matches the Lab's renderer aesthetic — dense, bright lime, big
+         particles, generous luminance keep range. */
+      --portrait-density:      1;
+      --portrait-point-size:   1.6;
+      --portrait-lum-cutoff:   0.02;   /* keep almost all non-pure-black pixels */
+      --portrait-color-cold:   #c8ff00;
+      --portrait-color-dark:   #1a1a1a;
     }
     .discipline-layout {
       display: grid;
@@ -2127,7 +2135,7 @@
 
       function init(img) {
         // ── 1. sample the source bitmap on a grid ──
-        const step  = Math.max(2, Math.floor(readNum('--portrait-density', 3)));
+        const step  = Math.max(1, Math.floor(readNum('--portrait-density', 3)));
         const sCanvas = document.createElement('canvas');
         sCanvas.width = img.naturalWidth;
         sCanvas.height = img.naturalHeight;
