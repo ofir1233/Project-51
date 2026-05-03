@@ -170,6 +170,16 @@
       transition: color 0.15s;
     }
     .reset-btn:hover { color: #ff7a7a; }
+
+    .export-btn {
+      width: 100%; margin-bottom: 6px; padding: 8px 10px;
+      background: transparent; border: 1px solid var(--line); border-radius: 4px;
+      color: var(--fg); font-family: inherit; font-size: 10px;
+      letter-spacing: 0.10em; text-align: left; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .export-btn:hover { border-color: var(--lime); color: var(--lime); }
+    .export-btn:last-child { margin-bottom: 0; }
     .scene-item {
       position: relative;
       padding: 10px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 4px;
@@ -274,6 +284,19 @@
             <div class="control-label"><span>Parallax</span><span id="ctlParallaxOut">0.18</span></div>
             <input type="range" id="ctlParallax" min="0.00" max="0.60" step="0.01" value="0.18" />
           </div>
+          <div class="control">
+            <div class="control-label"><span>Faded edges</span><span id="ctlFadeOut">0</span></div>
+            <input type="range" id="ctlFade" min="0" max="100" step="1" value="0" />
+          </div>
+        </div>
+        <button type="button" class="advanced-toggle" id="exportToggle">
+          <span>Export</span><span class="chev">▶</span>
+        </button>
+        <div class="advanced-group" id="exportGroup">
+          <button type="button" class="export-btn" id="expJson">Copy scene JSON</button>
+          <button type="button" class="export-btn" id="expEmbed">Copy embed HTML</button>
+          <button type="button" class="export-btn" id="expLlm">Copy LLM prompt</button>
+          <button type="button" class="export-btn" id="expPng">Download PNG</button>
         </div>
         <button type="button" class="reset-btn" id="ctlReset">↺ Reset to defaults</button>
       </div>
@@ -396,6 +419,149 @@
       document.documentElement.style.setProperty('--portrait-parallax', e.target.value);
     });
 
+    // Faded edges — apply a feathered mask to the canvas wrap.
+    // value=0 → no mask; value=100 → ~18% feather on each side (matches the
+    // discipline-portrait look on the portfolio).
+    function applyFade(value) {
+      const wrap = document.querySelector('.stage-canvas-wrap');
+      const v = Number(value);
+      if (!wrap) return;
+      if (v <= 0) {
+        wrap.style.maskImage = '';
+        wrap.style.webkitMaskImage = '';
+        wrap.style.maskComposite = '';
+        wrap.style.webkitMaskComposite = '';
+        return;
+      }
+      const pct = (v / 100) * 18;        // up to 18% on each edge
+      const inner = (100 - pct).toFixed(1);
+      const grad = `linear-gradient(to right, transparent 0%, #000 ${pct.toFixed(1)}%, #000 ${inner}%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 ${pct.toFixed(1)}%, #000 ${inner}%, transparent 100%)`;
+      wrap.style.maskImage = grad;
+      wrap.style.webkitMaskImage = grad;
+      wrap.style.maskComposite = 'intersect';
+      wrap.style.webkitMaskComposite = 'source-in';
+    }
+    $('ctlFade').addEventListener('input', (e) => {
+      $('ctlFadeOut').textContent = Number(e.target.value).toFixed(0);
+      applyFade(e.target.value);
+    });
+
+    // Export panel toggle (same pattern as Advanced)
+    $('exportToggle').addEventListener('click', () => {
+      $('exportToggle').classList.toggle('open');
+      $('exportGroup').classList.toggle('open');
+    });
+
+    // Helper: get current scene + control settings as a structured object
+    function currentSettings() {
+      return {
+        color:     $('ctlColor').value,
+        size:      Number($('ctlSize').value),
+        density:   Number($('ctlDensity').value),
+        depth:     Number($('ctlDepth').value),
+        noise:     Number($('ctlNoise').value),
+        mouse:     Number($('ctlMouse').value),
+        parallax:  Number($('ctlParallax').value),
+        fade:      Number($('ctlFade').value),
+      };
+    }
+
+    async function copyText(text, label) {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast(label + ' copied to clipboard');
+      } catch (e) {
+        toast('Copy failed: ' + e.message, 'err');
+      }
+    }
+
+    async function fetchActiveScene() {
+      if (!activeId) { toast('Click a scene in History first', 'err'); return null; }
+      try {
+        const { scene } = await api('GET', '/scenes/' + activeId);
+        return scene;
+      } catch (e) {
+        toast('Could not load scene: ' + e.message, 'err');
+        return null;
+      }
+    }
+
+    $('expJson').addEventListener('click', async () => {
+      const scene = await fetchActiveScene(); if (!scene) return;
+      const out = {
+        id:         scene.id,
+        prompt:     scene.prompt,
+        created_at: scene.created_at,
+        provider:   scene.provider,
+        model:      scene.model,
+        grid_w:     scene.grid_w,
+        grid_h:     scene.grid_h,
+        point_grid: scene.point_grid,
+        settings:   currentSettings(),
+      };
+      copyText(JSON.stringify(out, null, 2), 'Scene JSON');
+    });
+
+    $('expEmbed').addEventListener('click', async () => {
+      const scene = await fetchActiveScene(); if (!scene) return;
+      const grid = { lum: scene.point_grid.lum, w: scene.grid_w, h: scene.grid_h };
+      const html =
+`<!-- P51 Lab point-cloud embed · ${scene.prompt.replace(/-->/g,'-- >')} -->
+<canvas id="p51cloud" style="width:600px;height:400px;display:block;background:#0b0b0b"></canvas>
+<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<script type="module">
+  import { mountPointCloudFromGrid } from 'https://project51-lab.onrender.com/p51/lab/pointcloud-grid.mjs';
+  const grid = ${JSON.stringify(grid)};
+  const cloud = mountPointCloudFromGrid(document.getElementById('p51cloud'), { grid });
+  cloud.setColor('${$('ctlColor').value}');
+  cloud.setSize(${$('ctlSize').value});
+  cloud.setDensity(${$('ctlDensity').value});
+  cloud.setDepth(${$('ctlDepth').value});
+  cloud.setNoise(${$('ctlNoise').value});
+  cloud.setMouseForce(${$('ctlMouse').value});
+<\/script>`;
+      copyText(html, 'Embed HTML');
+    });
+
+    $('expLlm').addEventListener('click', async () => {
+      const scene = await fetchActiveScene(); if (!scene) return;
+      const s = currentSettings();
+      const prompt =
+`I generated a Three.js point-cloud rendering with the P51 Lab.
+
+Source: image-to-image generation (Gemini 2.5 Flash Image) of "${scene.prompt}".
+Sampled to a ${scene.grid_w}×${scene.grid_h} luminance grid (greyscale, 0=dark, 255=bright). Bytes are stored as a JSON array.
+
+Render approach (replicate this):
+1. Geometry: one vertex per non-culled grid cell. Cull cells whose normalised luminance > ${s.density.toFixed(2)} (background pixels).
+2. Position each vertex at (x/w − 0.5) * 2 * aspect on X, (0.5 − y/h) * 2 on Y, with Z displaced by (1 − lum/255) − 0.5) * ${s.depth.toFixed(2)}.
+3. Per-vertex aLum attribute = 1 − lum/255 (so source-dark pixels render bright).
+4. Shader: colour = mix(uColorCold * aLum, uColor, smoothstep(0.05, 0.95, aLum)). Both colours = ${$('ctlColor').value}.
+5. Animation: sin(time + x*4 + y*5) * ${s.noise.toFixed(3)} on Z; cos(time + y*3) * ${s.noise.toFixed(3)} * 0.4 on X.
+6. Cursor interaction: smoothstep(0.6, 0, distance to cursor) * ${s.mouse.toFixed(2)} push, plus ${s.parallax.toFixed(2)} rotation toward cursor.
+7. Point size: ${s.size.toFixed(2)} * pixelRatio * (1 + aLum * 0.7), additive billboard with a soft circular alpha.
+8. Edge fade: ${s.fade}% (0 = sharp, 100 = ~18% feather on each edge of the canvas via mask-image).
+
+Goal: reproduce this look in the user's framework of choice.`;
+      copyText(prompt, 'LLM prompt');
+    });
+
+    $('expPng').addEventListener('click', () => {
+      const canvas = $('canvas');
+      if (!canvas) return toast('No canvas', 'err');
+      // Force a fresh frame so the toDataURL captures the latest state
+      try {
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'p51-scene-' + (activeId || Date.now()) + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        toast('PNG download started');
+      } catch (e) {
+        toast('PNG export failed: ' + e.message, 'err');
+      }
+    });
+
     // Reset all controls to their defaults
     const CONTROL_DEFAULTS = {
       ctlColor:    '#c8ff00',
@@ -405,6 +571,7 @@
       ctlNoise:    '0.030',
       ctlMouse:    '0.25',
       ctlParallax: '0.18',
+      ctlFade:     '0',
     };
     $('ctlReset').addEventListener('click', () => {
       for (const [id, val] of Object.entries(CONTROL_DEFAULTS)) {
@@ -428,6 +595,7 @@
       c.setNoise($('ctlNoise').value);
       c.setMouseForce($('ctlMouse').value);
       document.documentElement.style.setProperty('--portrait-parallax', $('ctlParallax').value);
+      applyFade($('ctlFade').value);
     }
 
     // ── history list ──────────────────────────────────────────────────────
