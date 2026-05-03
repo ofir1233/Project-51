@@ -29,7 +29,7 @@ services:
       - key: SCENE_TTL_MS
         value: 259200000
       - key: GRID_SIZE
-        value: 200
+        value: 800
       - key: ALLOWED_ORIGINS
         value: ""
       - key: SUPABASE_URL
