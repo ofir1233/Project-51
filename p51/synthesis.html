@@ -796,7 +796,7 @@
     }
     .discipline-layout {
       display: grid;
-      grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.85fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
       gap: clamp(32px, 5vw, 80px);
       align-items: stretch;
       min-height: 1150px;
@@ -815,10 +815,7 @@
       align-items: stretch;
       justify-content: flex-end;
       cursor: none;
-      /* Fade only on the sides — keep top + bottom edges sharp so the cloud
-         visually anchors to the section. */
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
-              mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+      /* No mask — cloud goes edge-to-edge, full bleed. */
     }
     .discipline-portrait {
       width: 100%;
