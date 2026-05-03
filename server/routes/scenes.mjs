@@ -19,8 +19,7 @@ import { onlineConfig } from '../online-config.mjs';
 export const scenesRouter = Router();
 
 scenesRouter.post('/scenes', async (req, res) => {
-  const goal = (req.body?.prompt || '').toString().trim();
-  if (!goal) return res.status(400).json({ error: 'prompt required' });
+  let goal = (req.body?.prompt || '').toString().trim();
   if (goal.length > 2000) return res.status(400).json({ error: 'prompt too long' });
 
   // Optional reference image — base64-encoded in the body. Decoded into a
@@ -37,6 +36,12 @@ scenesRouter.post('/scenes', async (req, res) => {
       return res.status(400).json({ error: 'ref image not valid base64' });
     }
   }
+
+  // Either a text prompt, an image, or both. If only an image was sent, the
+  // writer should faithfully reproduce it — the REF_WRITER system prompt is
+  // already wired to interpret a generic goal as "reproduce the reference".
+  if (!goal && refBytes.length === 0) return res.status(400).json({ error: 'prompt or reference image required' });
+  if (!goal) goal = 'reproduce the reference image faithfully';
 
   // NDJSON streaming response. Each line is a self-contained JSON event.
   res.set({

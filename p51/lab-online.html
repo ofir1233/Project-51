@@ -173,7 +173,7 @@
           <button type="button" class="ref-thumb-clear" id="refClear" title="Remove reference" aria-label="Remove reference">×</button>
         </span>
         <input id="refFile" type="file" accept="image/png,image/jpeg,image/webp" hidden />
-        <input id="prompt" type="text" placeholder="describe a scene…" autocomplete="off" />
+        <input id="prompt" type="text" placeholder="describe a scene… (or just attach an image)" autocomplete="off" />
         <button type="submit" id="go">Generate</button>
       </form>
     </section>
@@ -398,7 +398,9 @@
     $('promptForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const prompt = $('prompt').value.trim();
-      if (!prompt) return;
+      // Either a prompt OR a reference image is enough. With just an image,
+      // the server defaults the goal to "reproduce the reference faithfully".
+      if (!prompt && !refImageB64) return;
 
       $('go').disabled = true;
       $('go').textContent = 'Generating…';
