@@ -144,6 +144,23 @@
     }
     .control input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }
     .control input[type=color]::-webkit-color-swatch { border: 0; border-radius: 2px; }
+
+    /* Advanced controls toggle + collapsible group */
+    .advanced-toggle {
+      width: 100%; margin-top: 12px; padding: 8px 0;
+      background: transparent; border: 0; border-top: 1px solid var(--line);
+      color: var(--dim); font-family: inherit; font-size: 9px;
+      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: color 0.15s;
+    }
+    .advanced-toggle:hover { color: var(--fg); }
+    .advanced-toggle .chev {
+      display: inline-block; transition: transform 0.2s; font-size: 10px;
+    }
+    .advanced-toggle.open .chev { transform: rotate(90deg); }
+    .advanced-group { display: none; padding-top: 8px; }
+    .advanced-group.open { display: block; }
     .scene-item {
       position: relative;
       padding: 10px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 4px;
@@ -227,6 +244,27 @@
         <div class="control">
           <div class="control-label"><span>Density</span><span id="ctlDensityOut">0.98</span></div>
           <input type="range" id="ctlDensity" min="0.30" max="1.00" step="0.01" value="0.98" />
+        </div>
+        <button type="button" class="advanced-toggle" id="advToggle">
+          <span>Advanced</span><span class="chev">▶</span>
+        </button>
+        <div class="advanced-group" id="advGroup">
+          <div class="control">
+            <div class="control-label"><span>Depth</span><span id="ctlDepthOut">0.50</span></div>
+            <input type="range" id="ctlDepth" min="0.00" max="1.50" step="0.01" value="0.50" />
+          </div>
+          <div class="control">
+            <div class="control-label"><span>Breathing / noise</span><span id="ctlNoiseOut">0.030</span></div>
+            <input type="range" id="ctlNoise" min="0.000" max="0.150" step="0.001" value="0.030" />
+          </div>
+          <div class="control">
+            <div class="control-label"><span>Mouse force</span><span id="ctlMouseOut">0.25</span></div>
+            <input type="range" id="ctlMouse" min="0.00" max="1.00" step="0.01" value="0.25" />
+          </div>
+          <div class="control">
+            <div class="control-label"><span>Parallax</span><span id="ctlParallaxOut">0.18</span></div>
+            <input type="range" id="ctlParallax" min="0.00" max="0.60" step="0.01" value="0.18" />
+          </div>
         </div>
       </div>
       <div class="sidebar-head">
@@ -325,6 +363,29 @@
       if (cloud) cloud.setDensity(e.target.value);
     });
 
+    // Advanced toggle
+    $('advToggle').addEventListener('click', () => {
+      $('advToggle').classList.toggle('open');
+      $('advGroup').classList.toggle('open');
+    });
+    $('ctlDepth').addEventListener('input', (e) => {
+      $('ctlDepthOut').textContent = Number(e.target.value).toFixed(2);
+      if (cloud) cloud.setDepth(e.target.value);
+    });
+    $('ctlNoise').addEventListener('input', (e) => {
+      $('ctlNoiseOut').textContent = Number(e.target.value).toFixed(3);
+      if (cloud) cloud.setNoise(e.target.value);
+    });
+    $('ctlMouse').addEventListener('input', (e) => {
+      $('ctlMouseOut').textContent = Number(e.target.value).toFixed(2);
+      if (cloud) cloud.setMouseForce(e.target.value);
+    });
+    $('ctlParallax').addEventListener('input', (e) => {
+      $('ctlParallaxOut').textContent = Number(e.target.value).toFixed(2);
+      // Parallax is read each frame from this CSS var by the renderer.
+      document.documentElement.style.setProperty('--portrait-parallax', e.target.value);
+    });
+
     function showScene(row) {
       $('empty').classList.add('hidden');
       const c = ensureCloud();
@@ -334,6 +395,10 @@
       c.setColor($('ctlColor').value);
       c.setSize($('ctlSize').value);
       c.setDensity($('ctlDensity').value);
+      c.setDepth($('ctlDepth').value);
+      c.setNoise($('ctlNoise').value);
+      c.setMouseForce($('ctlMouse').value);
+      document.documentElement.style.setProperty('--portrait-parallax', $('ctlParallax').value);
     }
 
     // ── history list ──────────────────────────────────────────────────────

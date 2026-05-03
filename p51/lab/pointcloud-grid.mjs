@@ -212,6 +212,15 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
       // cutoff in [0,1] — higher keeps brighter pixels too (denser cloud).
       if (lastGrid) uploadFromGrid(lastGrid, { cutoff: Math.max(0.05, Math.min(1.0, Number(cutoff) || 0.98)) });
     },
+    setDepth(n) {
+      uniforms.uDepth.value = Math.max(0, Number(n) || 0);
+    },
+    setNoise(n) {
+      uniforms.uNoise.value = Math.max(0, Number(n) || 0);
+    },
+    setMouseForce(n) {
+      uniforms.uMouseForce.value = Math.max(0, Number(n) || 0);
+    },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
       ro.disconnect();
