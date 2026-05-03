@@ -109,10 +109,13 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
   });
 
   let points = null;
+  let lastGrid = null; // remembered so density/cutoff can re-sample without a full reload
 
-  function uploadFromGrid({ lum, w, h }) {
-    if (!lum || !w || !h) return;
-    const lumCutoff = readNum('--portrait-lum-cutoff', 0.85);
+  function uploadFromGrid(grid, opts = {}) {
+    if (!grid || !grid.lum || !grid.w || !grid.h) return;
+    lastGrid = grid;
+    const { lum, w, h } = grid;
+    const lumCutoff = opts.cutoff ?? readNum('--portrait-lum-cutoff', 0.85);
     const aspect = w / h;
     const positions = [];
     const lums = [];
@@ -197,6 +200,18 @@ export function mountPointCloudFromGrid(canvas, { grid, getVar }) {
 
   return {
     setGrid(g) { uploadFromGrid(g); },
+    setColor(hex) {
+      const c = new THREE.Color(hex);
+      uniforms.uColor.value     = c;
+      uniforms.uColorCold.value = c;
+    },
+    setSize(n) {
+      uniforms.uPointSize.value = Math.max(0.1, Number(n) || 1.4);
+    },
+    setDensity(cutoff) {
+      // cutoff in [0,1] — higher keeps brighter pixels too (denser cloud).
+      if (lastGrid) uploadFromGrid(lastGrid, { cutoff: Math.max(0.05, Math.min(1.0, Number(cutoff) || 0.98)) });
+    },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
       ro.disconnect();

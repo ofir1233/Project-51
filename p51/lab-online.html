@@ -100,7 +100,7 @@
     .promptbar button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .sidebar {
-      border-left: 1px solid var(--line); display: grid; grid-template-rows: auto 1fr; min-height: 0;
+      border-left: 1px solid var(--line); display: grid; grid-template-rows: auto auto 1fr; min-height: 0;
     }
     .sidebar-head {
       padding: 14px 16px; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
@@ -108,6 +108,42 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .sidebar-list { overflow-y: auto; padding: 6px; }
+
+    /* Controls panel — sits above the history list */
+    .controls { padding: 14px 16px 16px; border-bottom: 1px solid var(--line); }
+    .control { margin-bottom: 12px; }
+    .control:last-child { margin-bottom: 0; }
+    .control-label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 6px;
+    }
+    .control-label span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
+    .control input[type=range] {
+      width: 100%; height: 16px; background: transparent; padding: 0; margin: 0;
+      -webkit-appearance: none; appearance: none; cursor: pointer;
+    }
+    .control input[type=range]::-webkit-slider-runnable-track {
+      height: 1px; background: var(--line);
+    }
+    .control input[type=range]::-moz-range-track {
+      height: 1px; background: var(--line);
+    }
+    .control input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--lime); border: 0; margin-top: -5.5px;
+    }
+    .control input[type=range]::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--lime); border: 0;
+    }
+    .control input[type=color] {
+      width: 100%; height: 26px; padding: 0; border: 1px solid var(--line);
+      background: transparent; border-radius: 3px; cursor: pointer;
+    }
+    .control input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }
+    .control input[type=color]::-webkit-color-swatch { border: 0; border-radius: 2px; }
     .scene-item {
       position: relative;
       padding: 10px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 4px;
@@ -179,6 +215,20 @@
     </section>
 
     <aside class="sidebar">
+      <div class="controls">
+        <div class="control">
+          <div class="control-label"><span>Color</span></div>
+          <input type="color" id="ctlColor" value="#c8ff00" />
+        </div>
+        <div class="control">
+          <div class="control-label"><span>Particle size</span><span id="ctlSizeOut">1.6</span></div>
+          <input type="range" id="ctlSize" min="0.4" max="4.0" step="0.1" value="1.6" />
+        </div>
+        <div class="control">
+          <div class="control-label"><span>Density</span><span id="ctlDensityOut">0.98</span></div>
+          <input type="range" id="ctlDensity" min="0.30" max="1.00" step="0.01" value="0.98" />
+        </div>
+      </div>
       <div class="sidebar-head">
         <span>History</span>
         <span id="count" style="color: var(--dim); letter-spacing: 0.15em;"></span>
@@ -249,16 +299,41 @@
     function ensureCloud() {
       if (cloud) return cloud;
       cloud = mountPointCloudFromGrid($('canvas'), { grid: null });
+      // apply current control values to a freshly-mounted renderer
+      cloud.setColor($('ctlColor').value);
+      cloud.setSize($('ctlSize').value);
+      // density is applied per-grid inside setGrid via the cutoff arg path,
+      // but the var must be set before sampling so re-apply by calling setDensity
+      // after the grid is loaded.
       return cloud;
     }
 
+    // ── live controls ─────────────────────────────────────────────────────
+    $('ctlColor').addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--portrait-color',      e.target.value);
+      document.documentElement.style.setProperty('--portrait-color-cold', e.target.value);
+      if (cloud) cloud.setColor(e.target.value);
+    });
+    $('ctlSize').addEventListener('input', (e) => {
+      $('ctlSizeOut').textContent = Number(e.target.value).toFixed(1);
+      document.documentElement.style.setProperty('--portrait-point-size', e.target.value);
+      if (cloud) cloud.setSize(e.target.value);
+    });
+    $('ctlDensity').addEventListener('input', (e) => {
+      $('ctlDensityOut').textContent = Number(e.target.value).toFixed(2);
+      document.documentElement.style.setProperty('--portrait-lum-cutoff', e.target.value);
+      if (cloud) cloud.setDensity(e.target.value);
+    });
+
     function showScene(row) {
       $('empty').classList.add('hidden');
-      ensureCloud().setGrid({
-        lum: row.point_grid.lum,
-        w:   row.grid_w,
-        h:   row.grid_h,
-      });
+      const c = ensureCloud();
+      c.setGrid({ lum: row.point_grid.lum, w: row.grid_w, h: row.grid_h });
+      // re-apply current control values so the loaded scene reflects the live
+      // controls (color/size are uniform-only; density re-samples geometry)
+      c.setColor($('ctlColor').value);
+      c.setSize($('ctlSize').value);
+      c.setDensity($('ctlDensity').value);
     }
 
     // ── history list ──────────────────────────────────────────────────────
